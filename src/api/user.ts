@@ -1,16 +1,30 @@
 import { findUserByIdentifierQuery } from '@/graphql/queries/findUserByIdentifier';
-import { FindUserByIdentifierResponse } from '@/graphql/types';
+import { getTransactionsCountByCategoryQuery } from '@/graphql/queries/getTransactionsCountByCategory';
+import {
+    FindUserByIdentifierResponse,
+    TransactionsCountByCategory
+} from '@/graphql/types';
 import { axiosInstance } from '@/services/axios-instance';
 import { useUID } from '../hooks/useUID';
 
-export async function getUserData(): Promise<FindUserByIdentifierResponse> {
+const variables = {
+    identifier: useUID()
+};
+
+export async function fetchUserData(): Promise<FindUserByIdentifierResponse> {
     return axiosInstance<FindUserByIdentifierResponse>({
-        method: 'POST',
         data: {
             query: findUserByIdentifierQuery,
-            variables: {
-                identifier: useUID()
-            }
+            variables
+        }
+    });
+}
+
+export async function fetchTransactionsCountByCategory(): Promise<TransactionsCountByCategory> {
+    return axiosInstance<TransactionsCountByCategory>({
+        data: {
+            query: getTransactionsCountByCategoryQuery,
+            variables
         }
     });
 }

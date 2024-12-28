@@ -19,3 +19,12 @@ type User = {
 export type FindUserByIdentifierResponse = {
     findUserByIdentifier: User;
 };
+
+type CategoryNameAndTransactionsCount = {
+    categoryName: string;
+    transactionCount: number;
+};
+
+export type TransactionsCountByCategory = {
+    getTransactionsCountByCategory: CategoryNameAndTransactionsCount[];
+};

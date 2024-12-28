@@ -10,6 +10,7 @@ export const AXIOS_INSTANCE = Axios.create({
 export const axiosInstance = <T>(config: AxiosRequestConfig): Promise<T> => {
     const source = Axios.CancelToken.source();
     const promise = AXIOS_INSTANCE({
+        method: 'POST',
         ...config,
         cancelToken: source.token
     }).then(({ data }) => data.data);

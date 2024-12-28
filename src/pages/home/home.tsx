@@ -31,9 +31,7 @@ export default function Home() {
 
     return (
         <>
-            <div className="flex w-max h-max">
-                <CategoriesChart />
-            </div>
+            <CategoriesChart />
             <Dialog
                 open={isDialogOpen}
                 onOpenChange={handleOpenChange}
