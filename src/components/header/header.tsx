@@ -7,7 +7,7 @@ import UserIconMenu from '../user-icon-menu/user-icon-menu';
 
 export default function Header() {
     return (
-        <nav className="flex w-full min-h-16 border-2 bg-background mt-5 rounded-3xl items-center justify-between px-4">
+        <nav className="flex w-full min-h-16 border-2 bg-background mt-5 rounded-3xl items-center justify-between px-4 mb-5">
             <div className="flex gap-6">
                 <Link to={'/'} className={buttonVariants({ variant: 'ghost' })}>
                     <HomeIcon />

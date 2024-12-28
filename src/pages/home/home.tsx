@@ -1,3 +1,4 @@
+import CategoriesChart from '@/components/categories-chart/categories-chart';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -30,7 +31,9 @@ export default function Home() {
 
     return (
         <>
-            <h1>aaa</h1>
+            <div className="flex w-max h-max">
+                <CategoriesChart />
+            </div>
             <Dialog
                 open={isDialogOpen}
                 onOpenChange={handleOpenChange}
