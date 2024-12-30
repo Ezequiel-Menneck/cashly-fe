@@ -1,5 +1,5 @@
-import { Component } from '@/components/categories-chart-monthly/categories-chart-monthly';
-import CategoriesChart from '@/components/categories-chart/categories-chart';
+import TransactionsByCategoryChart from '@/components/transactions-by-category-chart/transactions-by-category-chart';
+import { TransactionsByDateChart } from '@/components/transactions-by-date-chart/transactions-by-date-chart';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -33,9 +33,8 @@ export default function Home() {
     return (
         <>
             <div className="flex gap-2">
-                <CategoriesChart />
-                <Component />
-                {/* <Component2 /> */}
+                <TransactionsByCategoryChart />
+                <TransactionsByDateChart />
             </div>
             <Dialog
                 open={isDialogOpen}

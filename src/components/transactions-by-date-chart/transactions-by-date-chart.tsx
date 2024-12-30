@@ -37,19 +37,19 @@ const chartConfig = {
     visitors: {
         label: 'Visitors'
     },
-    desktop: {
-        label: 'Desktop',
+    count: {
+        label: 'Quantidade',
         color: 'hsl(var(--chart-1))'
     }
 } satisfies ChartConfig;
 
 type ChartData = {
     date: string;
-    desktop: number;
+    count: number;
 };
 
-export function Component() {
-    const currentMonth = (new Date().getMonth() + 1).toString(); // Get current month (1-12)
+export function TransactionsByDateChart() {
+    const currentMonth = (new Date().getMonth() + 1).toString();
     const [timeRange, setTimeRange] = useState(currentMonth);
     const [chartData, setChartData] = useState<ChartData[]>([]);
     const [mostRecentTransaction, setMostRecentTransaction] =
@@ -63,8 +63,8 @@ export function Component() {
         if (data) {
             const dynamicChartData = data.getTransactionsCountByDate.map(
                 (item) => ({
-                    date: item.date,
-                    desktop: item.transactionCount
+                    date: `${item.date}T00:00:00.000Z`,
+                    count: item.transactionCount
                 })
             );
 
@@ -73,8 +73,8 @@ export function Component() {
             const dynamicRecentTransaction =
                 data.getTransactionsCountByDate.reduce(
                     (mostRecent, current) => {
-                        return new Date(current.date) >
-                            new Date(mostRecent.date)
+                        return new Date(`${current.date}T00:00:00.000Z`) >
+                            new Date(`${mostRecent.date}T00:00:00.000Z`)
                             ? current
                             : mostRecent;
                     }
@@ -87,9 +87,9 @@ export function Component() {
         const date = new Date(item.date);
         if (!mostRecentTransaction?.date) return false;
 
-        const selectedMonth = parseInt(timeRange) - 1; // Convert to 0-11 for Date API
+        const selectedMonth = parseInt(timeRange);
 
-        return date.getMonth() === selectedMonth;
+        return date.getUTCMonth() + 1 === selectedMonth;
     });
 
     if (isPending) {
@@ -114,40 +114,40 @@ export function Component() {
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
                         <SelectItem value="1" className="rounded-lg">
-                            January
+                            Janeiro
                         </SelectItem>
                         <SelectItem value="2" className="rounded-lg">
-                            February
+                            Fevereiro
                         </SelectItem>
                         <SelectItem value="3" className="rounded-lg">
-                            March
+                            Março
                         </SelectItem>
                         <SelectItem value="4" className="rounded-lg">
-                            April
+                            Abril
                         </SelectItem>
                         <SelectItem value="5" className="rounded-lg">
-                            May
+                            Maio
                         </SelectItem>
                         <SelectItem value="6" className="rounded-lg">
-                            June
+                            Junho
                         </SelectItem>
                         <SelectItem value="7" className="rounded-lg">
-                            July
+                            Julho
                         </SelectItem>
                         <SelectItem value="8" className="rounded-lg">
-                            August
+                            Agosto
                         </SelectItem>
                         <SelectItem value="9" className="rounded-lg">
-                            September
+                            Setembro
                         </SelectItem>
                         <SelectItem value="10" className="rounded-lg">
-                            October
+                            Outubro
                         </SelectItem>
                         <SelectItem value="11" className="rounded-lg">
-                            November
+                            Novembro
                         </SelectItem>
                         <SelectItem value="12" className="rounded-lg">
-                            December
+                            Dezembro
                         </SelectItem>
                     </SelectContent>
                 </Select>
@@ -160,7 +160,7 @@ export function Component() {
                     <AreaChart data={filteredData} reverseStackOrder>
                         <defs>
                             <linearGradient
-                                id="fillDesktop"
+                                id="fillCount"
                                 x1="0"
                                 y1="0"
                                 x2="0"
@@ -168,30 +168,12 @@ export function Component() {
                             >
                                 <stop
                                     offset="5%"
-                                    stopColor="var(--color-desktop)"
+                                    stopColor="var(--color-count)"
                                     stopOpacity={0.8}
                                 />
                                 <stop
                                     offset="95%"
-                                    stopColor="var(--color-desktop)"
-                                    stopOpacity={0.1}
-                                />
-                            </linearGradient>
-                            <linearGradient
-                                id="fillMobile"
-                                x1="0"
-                                y1="0"
-                                x2="0"
-                                y2="1"
-                            >
-                                <stop
-                                    offset="5%"
-                                    stopColor="var(--color-mobile)"
-                                    stopOpacity={0.8}
-                                />
-                                <stop
-                                    offset="95%"
-                                    stopColor="var(--color-mobile)"
+                                    stopColor="var(--color-count)"
                                     stopOpacity={0.1}
                                 />
                             </linearGradient>
@@ -205,7 +187,10 @@ export function Component() {
                             minTickGap={32}
                             tickFormatter={(value) => {
                                 const date = new Date(value);
-                                return date.toLocaleDateString('pt-BR', {
+                                return new Date(
+                                    date.getTime() +
+                                        date.getTimezoneOffset() * 60000
+                                ).toLocaleDateString('pt-BR', {
                                     month: 'short',
                                     day: 'numeric'
                                 });
@@ -216,8 +201,10 @@ export function Component() {
                             content={
                                 <ChartTooltipContent
                                     labelFormatter={(value) => {
+                                        const date = new Date(value);
                                         return new Date(
-                                            value
+                                            date.getTime() +
+                                                date.getTimezoneOffset() * 60000
                                         ).toLocaleDateString('pt-BR', {
                                             month: 'short',
                                             day: 'numeric'
@@ -228,17 +215,10 @@ export function Component() {
                             }
                         />
                         <Area
-                            dataKey="mobile"
+                            dataKey="count"
                             type="natural"
-                            fill="url(#fillMobile)"
-                            stroke="var(--color-mobile)"
-                            stackId="a"
-                        />
-                        <Area
-                            dataKey="desktop"
-                            type="natural"
-                            fill="url(#fillDesktop)"
-                            stroke="var(--color-desktop)"
+                            fill="url(#fillCount)"
+                            stroke="var(--color-count)"
                             stackId="a"
                         />
                         <ChartLegend content={<ChartLegendContent />} />

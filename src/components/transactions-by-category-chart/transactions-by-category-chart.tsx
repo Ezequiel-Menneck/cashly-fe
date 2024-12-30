@@ -35,7 +35,7 @@ function getMonthName(): String {
     return capitalizedMonthName;
 }
 
-export default function CategoriesChart() {
+export default function TransactionsByCategoryChart() {
     const [chartData, setChartData] = useState<ChartData[]>([]);
     const [chartConfig, setChartConfig] = useState<ChartConfigType>({});
     const { isPending, data } = useQuery<TransactionsCountByCategory>({
