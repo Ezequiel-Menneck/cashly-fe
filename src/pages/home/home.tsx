@@ -1,3 +1,4 @@
+import { Component } from '@/components/categories-chart-monthly/categories-chart-monthly';
 import CategoriesChart from '@/components/categories-chart/categories-chart';
 import { Button } from '@/components/ui/button';
 import {
@@ -31,7 +32,11 @@ export default function Home() {
 
     return (
         <>
-            <CategoriesChart />
+            <div className="flex gap-2">
+                <CategoriesChart />
+                <Component />
+                {/* <Component2 /> */}
+            </div>
             <Dialog
                 open={isDialogOpen}
                 onOpenChange={handleOpenChange}

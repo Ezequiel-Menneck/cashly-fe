@@ -25,6 +25,15 @@ type CategoryNameAndTransactionsCount = {
     transactionCount: number;
 };
 
+export type DateOfTransactionsAndTransactionsCount = {
+    date: string;
+    transactionCount: number;
+};
+
 export type TransactionsCountByCategory = {
     getTransactionsCountByCategory: CategoryNameAndTransactionsCount[];
+};
+
+export type TransactionsCountByDate = {
+    getTransactionsCountByDate: DateOfTransactionsAndTransactionsCount[];
 };

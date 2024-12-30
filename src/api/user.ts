@@ -1,8 +1,10 @@
 import { findUserByIdentifierQuery } from '@/graphql/queries/findUserByIdentifier';
+import { getTransactionsCountByDateQuery } from '@/graphql/queries/getTransactionsByDate';
 import { getTransactionsCountByCategoryQuery } from '@/graphql/queries/getTransactionsCountByCategory';
 import {
     FindUserByIdentifierResponse,
-    TransactionsCountByCategory
+    TransactionsCountByCategory,
+    TransactionsCountByDate
 } from '@/graphql/types';
 import { axiosInstance } from '@/services/axios-instance';
 import { useUID } from '../hooks/useUID';
@@ -24,6 +26,15 @@ export async function fetchTransactionsCountByCategory(): Promise<TransactionsCo
     return axiosInstance<TransactionsCountByCategory>({
         data: {
             query: getTransactionsCountByCategoryQuery,
+            variables
+        }
+    });
+}
+
+export async function fetchTransactionsCountByDate(): Promise<TransactionsCountByDate> {
+    return axiosInstance<TransactionsCountByDate>({
+        data: {
+            query: getTransactionsCountByDateQuery,
             variables
         }
     });

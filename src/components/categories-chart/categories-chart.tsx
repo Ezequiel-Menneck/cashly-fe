@@ -17,7 +17,7 @@ import {
 import { TransactionsCountByCategory } from '@/graphql/types';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { Skeleton } from '../ui/skeleton';
+import LoadingFetchData from '../loading-fetch-data/loading-fetch-data';
 
 type ChartData = {
     category: string;
@@ -77,19 +77,12 @@ export default function CategoriesChart() {
         }
     }, [data]);
 
-    if (isPending)
-        return (
-            <div className="flex flex-col space-y-3">
-                <Skeleton className="h-[125px] w-[250px] rounded-xl" />
-                <div className="space-y-2">
-                    <Skeleton className="h-4 w-[250px]" />
-                    <Skeleton className="h-4 w-[200px]" />
-                </div>
-            </div>
-        );
+    if (isPending) {
+        return <LoadingFetchData />;
+    }
 
     return (
-        <Card className="w-max h-max">
+        <Card className="w-full sm:w-2/5 h-96">
             <CardHeader>
                 <CardTitle>Compras por categoria</CardTitle>
                 <CardDescription>{getMonthName()}</CardDescription>
