@@ -3,13 +3,7 @@
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
 
 import { fetchTransactionsCountByDate } from '@/api/user';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     ChartConfig,
     ChartContainer,
@@ -18,17 +12,8 @@ import {
     ChartTooltip,
     ChartTooltipContent
 } from '@/components/ui/chart';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
-} from '@/components/ui/select';
-import {
-    DateOfTransactionsAndTransactionsCount,
-    TransactionsCountByDate
-} from '@/graphql/types';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { DateOfTransactionsAndTransactionsCount, TransactionsCountByDate } from '@/graphql/types';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import LoadingFetchData from '../loading-fetch-data/loading-fetch-data';
@@ -52,33 +37,26 @@ export function TransactionsByDateChart() {
     const currentMonth = (new Date().getMonth() + 1).toString();
     const [timeRange, setTimeRange] = useState(currentMonth);
     const [chartData, setChartData] = useState<ChartData[]>([]);
-    const [mostRecentTransaction, setMostRecentTransaction] =
-        useState<DateOfTransactionsAndTransactionsCount>();
+    const [mostRecentTransaction, setMostRecentTransaction] = useState<DateOfTransactionsAndTransactionsCount>();
     const { isPending, data } = useQuery<TransactionsCountByDate>({
         queryKey: ['getTransactionsCountByDate'],
         queryFn: fetchTransactionsCountByDate
     });
 
     useEffect(() => {
-        if (data) {
-            const dynamicChartData = data.getTransactionsCountByDate.map(
-                (item) => ({
-                    date: `${item.date}T00:00:00.000Z`,
-                    count: item.transactionCount
-                })
-            );
+        if (data?.getTransactionsCountByDate && data.getTransactionsCountByDate.length > 0) {
+            const dynamicChartData = data.getTransactionsCountByDate.map((item) => ({
+                date: `${item.date}T00:00:00.000Z`,
+                count: item.transactionCount
+            }));
 
             setChartData(dynamicChartData);
 
-            const dynamicRecentTransaction =
-                data.getTransactionsCountByDate.reduce(
-                    (mostRecent, current) => {
-                        return new Date(`${current.date}T00:00:00.000Z`) >
-                            new Date(`${mostRecent.date}T00:00:00.000Z`)
-                            ? current
-                            : mostRecent;
-                    }
-                );
+            const dynamicRecentTransaction = data.getTransactionsCountByDate.reduce((mostRecent, current) => {
+                return new Date(`${current.date}T00:00:00.000Z`) > new Date(`${mostRecent.date}T00:00:00.000Z`)
+                    ? current
+                    : mostRecent;
+            });
             setMostRecentTransaction(dynamicRecentTransaction);
         }
     }, [data]);
@@ -101,15 +79,10 @@ export function TransactionsByDateChart() {
             <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
                 <div className="grid flex-1 gap-1 text-center sm:text-left">
                     <CardTitle>Quantidade de transações por mês</CardTitle>
-                    <CardDescription>
-                        Exibindo a quantidade de transações do ano!
-                    </CardDescription>
+                    <CardDescription>Exibindo a quantidade de transações do ano!</CardDescription>
                 </div>
                 <Select value={timeRange} onValueChange={setTimeRange}>
-                    <SelectTrigger
-                        className="w-[160px] rounded-lg sm:ml-auto"
-                        aria-label="Select a value"
-                    >
+                    <SelectTrigger className="w-[160px] rounded-lg sm:ml-auto" aria-label="Select a value">
                         <SelectValue placeholder="Last 3 months" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
@@ -153,29 +126,12 @@ export function TransactionsByDateChart() {
                 </Select>
             </CardHeader>
             <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-                <ChartContainer
-                    config={chartConfig}
-                    className="aspect-auto h-[250px] w-full"
-                >
+                <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
                     <AreaChart data={filteredData} reverseStackOrder>
                         <defs>
-                            <linearGradient
-                                id="fillCount"
-                                x1="0"
-                                y1="0"
-                                x2="0"
-                                y2="1"
-                            >
-                                <stop
-                                    offset="5%"
-                                    stopColor="var(--color-count)"
-                                    stopOpacity={0.8}
-                                />
-                                <stop
-                                    offset="95%"
-                                    stopColor="var(--color-count)"
-                                    stopOpacity={0.1}
-                                />
+                            <linearGradient id="fillCount" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="var(--color-count)" stopOpacity={0.8} />
+                                <stop offset="95%" stopColor="var(--color-count)" stopOpacity={0.1} />
                             </linearGradient>
                         </defs>
                         <CartesianGrid vertical={false} />
@@ -187,10 +143,7 @@ export function TransactionsByDateChart() {
                             minTickGap={32}
                             tickFormatter={(value) => {
                                 const date = new Date(value);
-                                return new Date(
-                                    date.getTime() +
-                                        date.getTimezoneOffset() * 60000
-                                ).toLocaleDateString('pt-BR', {
+                                return new Date(date.getTime() + date.getTimezoneOffset() * 60000).toLocaleDateString('pt-BR', {
                                     month: 'short',
                                     day: 'numeric'
                                 });
@@ -202,25 +155,19 @@ export function TransactionsByDateChart() {
                                 <ChartTooltipContent
                                     labelFormatter={(value) => {
                                         const date = new Date(value);
-                                        return new Date(
-                                            date.getTime() +
-                                                date.getTimezoneOffset() * 60000
-                                        ).toLocaleDateString('pt-BR', {
-                                            month: 'short',
-                                            day: 'numeric'
-                                        });
+                                        return new Date(date.getTime() + date.getTimezoneOffset() * 60000).toLocaleDateString(
+                                            'pt-BR',
+                                            {
+                                                month: 'short',
+                                                day: 'numeric'
+                                            }
+                                        );
                                     }}
                                     indicator="dot"
                                 />
                             }
                         />
-                        <Area
-                            dataKey="count"
-                            type="natural"
-                            fill="url(#fillCount)"
-                            stroke="var(--color-count)"
-                            stackId="a"
-                        />
+                        <Area dataKey="count" type="natural" fill="url(#fillCount)" stroke="var(--color-count)" stackId="a" />
                         <ChartLegend content={<ChartLegendContent />} />
                     </AreaChart>
                 </ChartContainer>

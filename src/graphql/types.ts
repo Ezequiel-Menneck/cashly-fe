@@ -37,3 +37,9 @@ export type TransactionsCountByCategory = {
 export type TransactionsCountByDate = {
     getTransactionsCountByDate: DateOfTransactionsAndTransactionsCount[];
 };
+
+export type CreateUserRequestDTO = {
+    username: string;
+    identifier: string;
+    baseSalary: number;
+};

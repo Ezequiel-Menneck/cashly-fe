@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
+import { useSaveUserInfo } from './useUserInfo';
 
-function generateUserUID() {
-    return Number(
-        Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000
-    ).toString();
+export function generateUserUID() {
+    return Number(Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000).toString();
 }
 
 export default function useFirstTimeCheck() {
@@ -13,8 +12,9 @@ export default function useFirstTimeCheck() {
 
     useEffect(() => {
         if (isFirstTime) {
-            if (!localStorage.getItem('userUID')) {
-                localStorage.setItem('userUID', generateUserUID());
+            if (!localStorage.getItem('userINFO')) {
+                const userInfo = { uid: generateUserUID(), username: '' };
+                useSaveUserInfo(userInfo);
             }
         }
     }, []);

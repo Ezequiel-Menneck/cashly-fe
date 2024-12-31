@@ -1,16 +1,18 @@
+import { createUserMutation } from '@/graphql/mutations/createUser';
 import { findUserByIdentifierQuery } from '@/graphql/queries/findUserByIdentifier';
 import { getTransactionsCountByDateQuery } from '@/graphql/queries/getTransactionsByDate';
 import { getTransactionsCountByCategoryQuery } from '@/graphql/queries/getTransactionsCountByCategory';
 import {
+    CreateUserRequestDTO,
     FindUserByIdentifierResponse,
     TransactionsCountByCategory,
     TransactionsCountByDate
 } from '@/graphql/types';
 import { axiosInstance } from '@/services/axios-instance';
-import { useUID } from '../hooks/useUID';
+import { useUserInfo } from '../hooks/useUserInfo';
 
 const variables = {
-    identifier: useUID()
+    identifier: useUserInfo().uid
 };
 
 export async function fetchUserData(): Promise<FindUserByIdentifierResponse> {
@@ -36,6 +38,19 @@ export async function fetchTransactionsCountByDate(): Promise<TransactionsCountB
         data: {
             query: getTransactionsCountByDateQuery,
             variables
+        }
+    });
+}
+
+export async function fetchCreateUser(createUserRequestDTO: CreateUserRequestDTO): Promise<CreateUserRequestDTO> {
+    return axiosInstance<CreateUserRequestDTO>({
+        data: {
+            query: createUserMutation,
+            variables: {
+                username: createUserRequestDTO.username,
+                identifier: createUserRequestDTO.identifier,
+                baseSalary: createUserRequestDTO.baseSalary
+            }
         }
     });
 }

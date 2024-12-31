@@ -1,19 +1,8 @@
 import { Bar, BarChart, XAxis, YAxis } from 'recharts';
 
 import { fetchTransactionsCountByCategory } from '@/api/user';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle
-} from '@/components/ui/card';
-import {
-    ChartConfig,
-    ChartContainer,
-    ChartTooltip,
-    ChartTooltipContent
-} from '@/components/ui/chart';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { TransactionsCountByCategory } from '@/graphql/types';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
@@ -30,8 +19,7 @@ type ChartConfigType = Record<string, { label: string; color?: string }>;
 function getMonthName(): String {
     const date = new Date();
     const monthName = date.toLocaleString('pt-BR', { month: 'long' });
-    const capitalizedMonthName =
-        monthName.charAt(0).toUpperCase() + monthName.slice(1);
+    const capitalizedMonthName = monthName.charAt(0).toUpperCase() + monthName.slice(1);
     return capitalizedMonthName;
 }
 
@@ -44,28 +32,25 @@ export default function TransactionsByCategoryChart() {
     });
 
     useEffect(() => {
-        if (data) {
-            const dynamicChartData = data.getTransactionsCountByCategory.map(
-                (item, index) => ({
-                    category: item.categoryName,
-                    transactionCount: item.transactionCount,
-                    fill: `hsl(var(--chart-${index + 1}))`
-                })
-            );
+        if (data?.getTransactionsCountByCategory && data.getTransactionsCountByCategory.length > 0) {
+            const dynamicChartData = data.getTransactionsCountByCategory.map((item, index) => ({
+                category: item.categoryName,
+                transactionCount: item.transactionCount,
+                fill: `hsl(var(--chart-${index + 1}))`
+            }));
 
-            const dynamicChartConfig =
-                data.getTransactionsCountByCategory.reduce(
-                    (config, item, index) => {
-                        return {
-                            ...config,
-                            [item.categoryName.toLocaleLowerCase()]: {
-                                label: item.categoryName,
-                                color: `hsl(var(--chart-${index + 1}))`
-                            }
-                        };
-                    },
-                    {} as Record<string, { label: string; color: string }>
-                );
+            const dynamicChartConfig = data.getTransactionsCountByCategory.reduce(
+                (config, item, index) => {
+                    return {
+                        ...config,
+                        [item.categoryName.toLocaleLowerCase()]: {
+                            label: item.categoryName,
+                            color: `hsl(var(--chart-${index + 1}))`
+                        }
+                    };
+                },
+                {} as Record<string, { label: string; color: string }>
+            );
 
             setChartData(dynamicChartData);
             setChartConfig({
@@ -104,23 +89,15 @@ export default function TransactionsByCategoryChart() {
                             tickMargin={10}
                             axisLine={false}
                             tickFormatter={(value) => {
-                                const config =
-                                    chartConfig[value as keyof ChartConfig];
+                                const config = chartConfig[value as keyof ChartConfig];
                                 return config ? config.label : value;
                             }}
                             width={80}
                             tick={{ textAnchor: 'start', dx: -50 }}
                         />
                         <XAxis dataKey="transactionCount" type="number" hide />
-                        <ChartTooltip
-                            cursor={false}
-                            content={<ChartTooltipContent hideLabel />}
-                        />
-                        <Bar
-                            dataKey="transactionCount"
-                            layout="vertical"
-                            radius={5}
-                        />
+                        <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+                        <Bar dataKey="transactionCount" layout="vertical" radius={5} />
                     </BarChart>
                 </ChartContainer>
             </CardContent>
