@@ -36,7 +36,7 @@ export default function UserIconMenu() {
                     <DialogHeader>
                         <DialogTitle>UID</DialogTitle>
                         <div className="flex items-center justify-between">
-                            <DialogDescription>UID: 123812832183</DialogDescription>
+                            <DialogDescription>UID: {UID}</DialogDescription>
                             <Button type="submit" size="sm" className="px-3" onClick={handleCopy}>
                                 <span className="sr-only">Copy</span>
                                 <Copy />

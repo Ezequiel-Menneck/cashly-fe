@@ -111,11 +111,16 @@ export default function FirstTimeDialog() {
                                         )}
                                     />
                                 </div>
+                                <DialogDescription className="mt-2 mb-2 text-xs">
+                                    <i>Essas informações são necessárias para melhorar sua experiencia conosco</i>
+                                </DialogDescription>
                             </DialogHeader>
-                            <DialogFooter>
-                                <Button type="submit">Ok!</Button>
-                            </DialogFooter>
                         </div>
+                        <DialogFooter>
+                            <Button type="submit" className="min-w-[100px]">
+                                Ok!
+                            </Button>
+                        </DialogFooter>
                     </form>
                 </Form>
             </DialogContent>
