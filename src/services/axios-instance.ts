@@ -13,7 +13,7 @@ export const axiosInstance = <T>(config: AxiosRequestConfig): Promise<T> => {
         method: 'POST',
         ...config,
         cancelToken: source.token
-    }).then(({ data }) => data.data);
+    }).then(({ data }) => data);
 
     return promise;
 };

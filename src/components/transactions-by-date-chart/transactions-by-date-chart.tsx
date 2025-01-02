@@ -13,7 +13,9 @@ import {
     ChartTooltipContent
 } from '@/components/ui/chart';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { GraphQLResponse } from '@/graphql/dataWrapper';
 import { DateOfTransactionsAndTransactionsCount, TransactionsCountByDate } from '@/graphql/types';
+import { useUserInfo } from '@/hooks/useUserInfo';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import LoadingFetchData from '../loading-fetch-data/loading-fetch-data';
@@ -38,26 +40,30 @@ export function TransactionsByDateChart() {
     const [timeRange, setTimeRange] = useState(currentMonth);
     const [chartData, setChartData] = useState<ChartData[]>([]);
     const [mostRecentTransaction, setMostRecentTransaction] = useState<DateOfTransactionsAndTransactionsCount>();
-    const { isPending, data } = useQuery<TransactionsCountByDate>({
+    const { isPending, data } = useQuery<GraphQLResponse<TransactionsCountByDate>>({
         queryKey: ['getTransactionsCountByDate'],
-        queryFn: fetchTransactionsCountByDate
+        queryFn: () => fetchTransactionsCountByDate(useUserInfo().uid)
     });
 
     useEffect(() => {
-        if (data?.getTransactionsCountByDate && data.getTransactionsCountByDate.length > 0) {
-            const dynamicChartData = data.getTransactionsCountByDate.map((item) => ({
+        if (data?.data?.getTransactionsCountByDate && data.data.getTransactionsCountByDate.length > 0) {
+            const transactionCount = data.data.getTransactionsCountByDate;
+            const dynamicChartData = transactionCount.map((item) => ({
                 date: `${item.date}T00:00:00.000Z`,
                 count: item.transactionCount
             }));
 
             setChartData(dynamicChartData);
 
-            const dynamicRecentTransaction = data.getTransactionsCountByDate.reduce((mostRecent, current) => {
+            const dynamicRecentTransaction = transactionCount.reduce((mostRecent, current) => {
                 return new Date(`${current.date}T00:00:00.000Z`) > new Date(`${mostRecent.date}T00:00:00.000Z`)
                     ? current
                     : mostRecent;
             });
             setMostRecentTransaction(dynamicRecentTransaction);
+        } else {
+            setChartData([]);
+            setMostRecentTransaction(undefined);
         }
     }, [data]);
 

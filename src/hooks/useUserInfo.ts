@@ -15,5 +15,5 @@ export function useSaveUserInfo(info: UserUidAndUsername) {
 
 export type UserUidAndUsername = {
     uid: string;
-    username: string;
+    username?: string;
 };

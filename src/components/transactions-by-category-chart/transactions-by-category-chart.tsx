@@ -3,7 +3,9 @@ import { Bar, BarChart, XAxis, YAxis } from 'recharts';
 import { fetchTransactionsCountByCategory } from '@/api/user';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { GraphQLResponse } from '@/graphql/dataWrapper';
 import { TransactionsCountByCategory } from '@/graphql/types';
+import { useUserInfo } from '@/hooks/useUserInfo';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import LoadingFetchData from '../loading-fetch-data/loading-fetch-data';
@@ -26,20 +28,21 @@ function getMonthName(): String {
 export default function TransactionsByCategoryChart() {
     const [chartData, setChartData] = useState<ChartData[]>([]);
     const [chartConfig, setChartConfig] = useState<ChartConfigType>({});
-    const { isPending, data } = useQuery<TransactionsCountByCategory>({
+    const { isPending, data } = useQuery<GraphQLResponse<TransactionsCountByCategory>>({
         queryKey: ['getTransactionsCountByCategory'],
-        queryFn: fetchTransactionsCountByCategory
+        queryFn: () => fetchTransactionsCountByCategory(useUserInfo().uid)
     });
 
     useEffect(() => {
-        if (data?.getTransactionsCountByCategory && data.getTransactionsCountByCategory.length > 0) {
-            const dynamicChartData = data.getTransactionsCountByCategory.map((item, index) => ({
+        if (data?.data?.getTransactionsCountByCategory && data.data.getTransactionsCountByCategory.length > 0) {
+            const transactionCount = data.data.getTransactionsCountByCategory;
+            const dynamicChartData = transactionCount.map((item, index) => ({
                 category: item.categoryName,
                 transactionCount: item.transactionCount,
                 fill: `hsl(var(--chart-${index + 1}))`
             }));
 
-            const dynamicChartConfig = data.getTransactionsCountByCategory.reduce(
+            const dynamicChartConfig = transactionCount.reduce(
                 (config, item, index) => {
                     return {
                         ...config,
@@ -59,6 +62,9 @@ export default function TransactionsByCategoryChart() {
                 },
                 ...dynamicChartConfig
             } satisfies ChartConfig);
+        } else {
+            setChartData([]);
+            setChartConfig({});
         }
     }, [data]);
 

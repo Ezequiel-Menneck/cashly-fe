@@ -1,3 +1,4 @@
+import { GraphQLResponse } from '@/graphql/dataWrapper';
 import { createUserMutation } from '@/graphql/mutations/createUser';
 import { findUserByIdentifierQuery } from '@/graphql/queries/findUserByIdentifier';
 import { getTransactionsCountByDateQuery } from '@/graphql/queries/getTransactionsByDate';
@@ -9,41 +10,44 @@ import {
     TransactionsCountByDate
 } from '@/graphql/types';
 import { axiosInstance } from '@/services/axios-instance';
-import { useUserInfo } from '../hooks/useUserInfo';
 
-const variables = {
-    identifier: useUserInfo().uid
-};
-
-export async function fetchUserData(): Promise<FindUserByIdentifierResponse> {
-    return axiosInstance<FindUserByIdentifierResponse>({
+export async function fetchUserData(userUid: string): Promise<GraphQLResponse<FindUserByIdentifierResponse>> {
+    return await axiosInstance<GraphQLResponse<FindUserByIdentifierResponse>>({
         data: {
             query: findUserByIdentifierQuery,
-            variables
+            variables: {
+                identifier: userUid
+            }
         }
     });
 }
 
-export async function fetchTransactionsCountByCategory(): Promise<TransactionsCountByCategory> {
-    return axiosInstance<TransactionsCountByCategory>({
+export async function fetchTransactionsCountByCategory(userUid: string): Promise<GraphQLResponse<TransactionsCountByCategory>> {
+    return await axiosInstance<GraphQLResponse<TransactionsCountByCategory>>({
         data: {
             query: getTransactionsCountByCategoryQuery,
-            variables
+            variables: {
+                identifier: userUid
+            }
         }
     });
 }
 
-export async function fetchTransactionsCountByDate(): Promise<TransactionsCountByDate> {
-    return axiosInstance<TransactionsCountByDate>({
+export async function fetchTransactionsCountByDate(userUid: string): Promise<GraphQLResponse<TransactionsCountByDate>> {
+    return await axiosInstance<GraphQLResponse<TransactionsCountByDate>>({
         data: {
             query: getTransactionsCountByDateQuery,
-            variables
+            variables: {
+                identifier: userUid
+            }
         }
     });
 }
 
-export async function fetchCreateUser(createUserRequestDTO: CreateUserRequestDTO): Promise<CreateUserRequestDTO> {
-    return axiosInstance<CreateUserRequestDTO>({
+export async function fetchCreateUser(
+    createUserRequestDTO: CreateUserRequestDTO
+): Promise<GraphQLResponse<CreateUserRequestDTO>> {
+    return await axiosInstance<GraphQLResponse<CreateUserRequestDTO>>({
         data: {
             query: createUserMutation,
             variables: {
