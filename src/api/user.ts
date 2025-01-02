@@ -1,5 +1,6 @@
 import { GraphQLResponse } from '@/graphql/dataWrapper';
 import { createUserMutation } from '@/graphql/mutations/createUser';
+import { deleteUserByIdentifierMutation } from '@/graphql/mutations/deleteUserByIdentifier';
 import { findUserByIdentifierQuery } from '@/graphql/queries/findUserByIdentifier';
 import { getTransactionsCountByDateQuery } from '@/graphql/queries/getTransactionsByDate';
 import { getTransactionsCountByCategoryQuery } from '@/graphql/queries/getTransactionsCountByCategory';
@@ -54,6 +55,17 @@ export async function fetchCreateUser(
                 username: createUserRequestDTO.username,
                 identifier: createUserRequestDTO.identifier,
                 baseSalary: createUserRequestDTO.baseSalary
+            }
+        }
+    });
+}
+
+export async function fetchDeleteUserAccount(userUid: string): Promise<Boolean> {
+    return await axiosInstance<Boolean>({
+        data: {
+            query: deleteUserByIdentifierMutation,
+            variables: {
+                identifier: userUid
             }
         }
     });

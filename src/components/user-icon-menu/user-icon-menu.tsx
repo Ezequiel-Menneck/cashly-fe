@@ -1,4 +1,4 @@
-import { fetchUserData } from '@/api/user';
+import { fetchDeleteUserAccount, fetchUserData } from '@/api/user';
 import { useSaveUserInfo, useUserInfo } from '@/hooks/useUserInfo';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
@@ -6,6 +6,7 @@ import { Copy } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import FirstTimeDialog from '../first-time-dialog/first-time-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '../ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../ui/dialog';
@@ -30,6 +31,7 @@ export default function UserIconMenu() {
         closeAccount: false,
         errorDialog: false
     });
+    const [showFirstTimeDialog, setShowFirstTimeDialog] = useState<boolean>(false);
 
     const handleCopy = () => {
         navigator.clipboard.writeText(UID);
@@ -42,7 +44,7 @@ export default function UserIconMenu() {
         }
     });
 
-    async function onSubmit(value: z.infer<typeof formSchema>) {
+    async function onSubmitRecoveryUserAccount(value: z.infer<typeof formSchema>) {
         try {
             const userData = await fetchUserData(value.uid);
             if (userData.errors) {
@@ -56,6 +58,18 @@ export default function UserIconMenu() {
             setUserActionsDialogs({ ...userActionsDialogs, recoveryAccount: false });
         } catch (error) {
             console.error('An error occurred:', error);
+        }
+    }
+
+    async function handleDeleteAccount(): Promise<void> {
+        const deleted = await fetchDeleteUserAccount(UID);
+        if (deleted) {
+            localStorage.removeItem('userINFO');
+            queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByDate'] });
+            queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByCategory'] });
+            localStorage.removeItem('isFirstTime');
+            setUserActionsDialogs({ ...userActionsDialogs, closeAccount: false });
+            setShowFirstTimeDialog(true);
         }
     }
 
@@ -82,6 +96,7 @@ export default function UserIconMenu() {
                 </DropdownMenuContent>
             </DropdownMenu>
 
+            {/* Show UID Modal */}
             <Dialog
                 open={userActionsDialogs.uidDialog}
                 onOpenChange={(open) => setUserActionsDialogs({ ...userActionsDialogs, uidDialog: open })}
@@ -100,13 +115,14 @@ export default function UserIconMenu() {
                 </DialogContent>
             </Dialog>
 
+            {/* Recovery Account Modal */}
             <Dialog
                 open={userActionsDialogs.recoveryAccount}
                 onOpenChange={(open) => setUserActionsDialogs({ ...userActionsDialogs, recoveryAccount: open })}
             >
                 <DialogContent className="w-64">
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                        <form onSubmit={form.handleSubmit(onSubmitRecoveryUserAccount)} className="space-y-8">
                             <div>
                                 <DialogHeader>
                                     <DialogTitle>UID</DialogTitle>
@@ -140,6 +156,26 @@ export default function UserIconMenu() {
                 </DialogContent>
             </Dialog>
 
+            {/* Delete Account Modal */}
+            <Dialog
+                open={userActionsDialogs.closeAccount}
+                onOpenChange={(open) => setUserActionsDialogs({ ...userActionsDialogs, closeAccount: open })}
+            >
+                <DialogContent className="w-96">
+                    <DialogHeader>
+                        <DialogTitle>Você tem certeza que deseja deletar sua conta?</DialogTitle>
+                        <div className="flex flex-col">
+                            <DialogDescription className="mb-3">
+                                Essa é uma ação irrevestivel, caso você prosiga seus dados não poderão ser recuperados
+                            </DialogDescription>
+                            <Button type="submit" size="sm" className="px-3" onClick={handleDeleteAccount}>
+                                Confirmar
+                            </Button>
+                        </div>
+                    </DialogHeader>
+                </DialogContent>
+            </Dialog>
+
             {/* Error Dialog for Recovery Account */}
             <Dialog
                 open={userActionsDialogs.errorDialog}
@@ -156,6 +192,8 @@ export default function UserIconMenu() {
                     </DialogHeader>
                 </DialogContent>
             </Dialog>
+
+            {showFirstTimeDialog && <FirstTimeDialog />}
         </>
     );
 }
