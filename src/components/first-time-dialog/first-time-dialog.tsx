@@ -1,10 +1,8 @@
 import { fetchCreateUser } from '@/api/user';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import useFirstTimeCheck from '@/hooks/ useFirstTimeCheck';
 import { useSaveUserInfo, useUserInfo } from '@/hooks/useUserInfo';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Separator } from '@radix-ui/react-dropdown-menu';
-import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '../ui/button';
@@ -24,10 +22,8 @@ const formSchema = z.object({
         .positive({ message: 'O salário base deve ser maior que zero' })
 });
 
-export default function FirstTimeDialog() {
-    const { isFirstTime, markAsViewed } = useFirstTimeCheck();
+export default function FirstTimeDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
     const userINFO = useUserInfo();
-    const [isDialogOpen, setIsDialogOpen] = useState(isFirstTime);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -38,24 +34,14 @@ export default function FirstTimeDialog() {
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        markAsViewed();
         useSaveUserInfo({ uid: userINFO.uid, username: values.username });
         await fetchCreateUser({ username: values.username, identifier: userINFO.uid, baseSalary: values.baseSalary });
+        form.reset();
+        onClose();
     }
 
-    useEffect(() => {
-        setIsDialogOpen(isFirstTime);
-    }, [isFirstTime]);
-
-    const handleOpenChange = (open: boolean) => {
-        setIsDialogOpen(open);
-        if (!open) {
-            markAsViewed();
-        }
-    };
-
     return (
-        <Dialog open={isDialogOpen} onOpenChange={handleOpenChange}>
+        <Dialog open={open} onOpenChange={onClose}>
             <DialogContent className="w-full">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">

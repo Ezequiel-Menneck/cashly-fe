@@ -1,12 +1,12 @@
 import { fetchDeleteUserAccount, fetchUserData } from '@/api/user';
-import { generateUserUID } from '@/hooks/ useFirstTimeCheck';
-import { UserUidAndUsername, useSaveUserInfo, useUserInfo } from '@/hooks/useUserInfo';
+import { generateUserUID, UserUidAndUsername, useSaveUserInfo, useUserInfo } from '@/hooks/useUserInfo';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import { Copy } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import FirstTimeDialog from '../first-time-dialog/first-time-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '../ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../ui/dialog';
@@ -31,6 +31,11 @@ export default function UserIconMenu() {
         closeAccount: false,
         errorDialog: false
     });
+    const [showFirstTimeDialog, setShowFirstTimeDialog] = useState<boolean>(false);
+
+    const handleCloseFirstTimeDialog = () => {
+        setShowFirstTimeDialog(false);
+    };
 
     const handleCopy = () => {
         navigator.clipboard.writeText(UID);
@@ -68,6 +73,7 @@ export default function UserIconMenu() {
         if (deleted) {
             resetUserInfo();
             setUserActionsDialogs({ ...userActionsDialogs, closeAccount: false });
+            setShowFirstTimeDialog(true);
         }
     }
 
@@ -76,6 +82,7 @@ export default function UserIconMenu() {
         const userInfo: UserUidAndUsername = { uid: generateUserUID(), username: '' };
         useSaveUserInfo(userInfo);
         setUserActionsDialogs({ ...userActionsDialogs, newAccount: false });
+        setShowFirstTimeDialog(true);
     }
 
     return (
@@ -224,6 +231,8 @@ export default function UserIconMenu() {
                     </DialogHeader>
                 </DialogContent>
             </Dialog>
+
+            <FirstTimeDialog open={showFirstTimeDialog} onClose={handleCloseFirstTimeDialog} />
         </>
     );
 }
