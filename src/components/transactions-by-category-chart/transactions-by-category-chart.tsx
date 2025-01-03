@@ -73,19 +73,22 @@ export default function TransactionsByCategoryChart() {
     }
 
     return (
-        <Card className="w-full sm:w-2/5 h-96">
-            <CardHeader>
+        <Card className="w-full sm:w-2/5">
+            <CardHeader className="pb-2">
                 <CardTitle>Compras por categoria</CardTitle>
                 <CardDescription>{getMonthName()}</CardDescription>
             </CardHeader>
-            <CardContent>
-                <ChartContainer config={chartConfig}>
+            <CardContent className="h-[200px]">
+                <ChartContainer config={chartConfig} className="h-[200px]">
                     <BarChart
                         accessibilityLayer
                         data={chartData}
                         layout="vertical"
                         margin={{
-                            left: 0
+                            left: 0,
+                            top: 0,
+                            bottom: 0,
+                            right: 0
                         }}
                     >
                         <YAxis
@@ -100,6 +103,7 @@ export default function TransactionsByCategoryChart() {
                             }}
                             width={80}
                             tick={{ textAnchor: 'start', dx: -50 }}
+                            // height={}
                         />
                         <XAxis dataKey="transactionCount" type="number" hide />
                         <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />

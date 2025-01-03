@@ -1,10 +1,10 @@
 import FirstTimeDialog from '@/components/first-time-dialog/first-time-dialog';
-import TransactionsByCategoryChart from '@/components/transactions-by-category-chart/transactions-by-category-chart';
-import { TransactionsByDateChart } from '@/components/transactions-by-date-chart/transactions-by-date-chart';
+import { useUserInfo } from '@/hooks/useUserInfo';
 import { useEffect, useState } from 'react';
 
 export default function Home() {
     const [showFirstTimeDialog, setShowFirstTimeDialog] = useState<boolean>(false);
+    const userInfo = useUserInfo();
 
     useEffect(() => {
         const isFirstTime = !localStorage.getItem('isFirstTime');
@@ -20,10 +20,10 @@ export default function Home() {
 
     return (
         <>
-            <div className="flex gap-2">
-                <TransactionsByCategoryChart />
-                <TransactionsByDateChart />
-            </div>
+            <h1 className="mb-2 text-2xl">
+                Bem vindo ao <strong>Cashly</strong> {userInfo.username != '' ? userInfo.username : ''}
+            </h1>
+
             <FirstTimeDialog open={showFirstTimeDialog} onClose={handleCloseForm} />
         </>
     );

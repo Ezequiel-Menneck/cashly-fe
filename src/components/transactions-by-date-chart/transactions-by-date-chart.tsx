@@ -81,7 +81,7 @@ export function TransactionsByDateChart() {
     }
 
     return (
-        <Card className="w-3/5">
+        <Card className="w-3/5 h-full">
             <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
                 <div className="grid flex-1 gap-1 text-center sm:text-left">
                     <CardTitle>Quantidade de transações por mês</CardTitle>
@@ -132,7 +132,7 @@ export function TransactionsByDateChart() {
                 </Select>
             </CardHeader>
             <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-                <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
+                <ChartContainer config={chartConfig} className="aspect-auto h-[150px] w-full">
                     <AreaChart data={filteredData} reverseStackOrder>
                         <defs>
                             <linearGradient id="fillCount" x1="0" y1="0" x2="0" y2="1">
