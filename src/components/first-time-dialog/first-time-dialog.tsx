@@ -1,12 +1,12 @@
 import { fetchCreateUser } from '@/api/user';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useSaveUserInfo, useUserInfo } from '@/hooks/useUserInfo';
-import { formatToBRL } from '@/utils/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Separator } from '@radix-ui/react-dropdown-menu';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '../ui/button';
+import { CurrencyInput } from '../ui/currency-input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Input } from '../ui/input';
 
@@ -83,26 +83,10 @@ export default function FirstTimeDialog({ open, onClose }: { open: boolean; onCl
                                             <FormItem className="mb-2">
                                                 <FormLabel>Salário base mensal</FormLabel>
                                                 <FormControl>
-                                                    <Input
+                                                    <CurrencyInput
                                                         placeholder="R$ 0,00"
-                                                        value={field.value ? formatToBRL(field.value / 100) : ''}
-                                                        onChange={(e) => {
-                                                            const rawValue = e.target.value.replace(/\D/g, '');
-                                                            const numberValue = rawValue ? Number(rawValue) : 0;
-                                                            field.onChange(numberValue);
-                                                        }}
-                                                        onKeyDown={(e) => {
-                                                            if (
-                                                                !/[\d]/.test(e.key) &&
-                                                                !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight'].includes(
-                                                                    e.key
-                                                                ) &&
-                                                                !e.ctrlKey &&
-                                                                !e.metaKey
-                                                            ) {
-                                                                e.preventDefault();
-                                                            }
-                                                        }}
+                                                        value={field.value || 0}
+                                                        onChange={field.onChange}
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
