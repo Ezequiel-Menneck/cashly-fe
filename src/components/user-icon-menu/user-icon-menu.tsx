@@ -1,12 +1,12 @@
 import { fetchDeleteUserAccount, fetchUserData } from '@/api/user';
-import { useSaveUserInfo, useUserInfo } from '@/hooks/useUserInfo';
+import { generateUserUID } from '@/hooks/ useFirstTimeCheck';
+import { UserUidAndUsername, useSaveUserInfo, useUserInfo } from '@/hooks/useUserInfo';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import { Copy } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import FirstTimeDialog from '../first-time-dialog/first-time-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '../ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../ui/dialog';
@@ -24,14 +24,13 @@ const formSchema = z.object({
 export default function UserIconMenu() {
     const UID = useUserInfo().uid || 'None';
     const queryClient = useQueryClient();
-
     const [userActionsDialogs, setUserActionsDialogs] = useState({
         uidDialog: false,
         recoveryAccount: false,
+        newAccount: false,
         closeAccount: false,
         errorDialog: false
     });
-    const [showFirstTimeDialog, setShowFirstTimeDialog] = useState<boolean>(false);
 
     const handleCopy = () => {
         navigator.clipboard.writeText(UID);
@@ -45,32 +44,38 @@ export default function UserIconMenu() {
     });
 
     async function onSubmitRecoveryUserAccount(value: z.infer<typeof formSchema>) {
-        try {
-            const userData = await fetchUserData(value.uid);
-            if (userData.errors) {
-                setUserActionsDialogs({ ...userActionsDialogs, errorDialog: true });
-            }
-
-            useSaveUserInfo({ uid: value.uid, username: userData.data?.findUserByIdentifier.username });
-            queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByDate'] });
-            queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByCategory'] });
-
-            setUserActionsDialogs({ ...userActionsDialogs, recoveryAccount: false });
-        } catch (error) {
-            console.error('An error occurred:', error);
+        const userData = await fetchUserData(value.uid);
+        if (userData.errors) {
+            setUserActionsDialogs({ ...userActionsDialogs, errorDialog: true });
+            return;
         }
+
+        useSaveUserInfo({ uid: value.uid, username: userData.data?.findUserByIdentifier.username });
+        queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByDate'] });
+        queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByCategory'] });
+
+        setUserActionsDialogs({ ...userActionsDialogs, recoveryAccount: false });
+    }
+
+    function resetUserInfo() {
+        localStorage.removeItem('userINFO');
+        queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByDate'] });
+        queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByCategory'] });
     }
 
     async function handleDeleteAccount(): Promise<void> {
         const deleted = await fetchDeleteUserAccount(UID);
         if (deleted) {
-            localStorage.removeItem('userINFO');
-            queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByDate'] });
-            queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByCategory'] });
-            localStorage.removeItem('isFirstTime');
+            resetUserInfo();
             setUserActionsDialogs({ ...userActionsDialogs, closeAccount: false });
-            setShowFirstTimeDialog(true);
         }
+    }
+
+    function handleCreateNewAccount(): void {
+        resetUserInfo();
+        const userInfo: UserUidAndUsername = { uid: generateUserUID(), username: '' };
+        useSaveUserInfo(userInfo);
+        setUserActionsDialogs({ ...userActionsDialogs, newAccount: false });
     }
 
     return (
@@ -89,7 +94,9 @@ export default function UserIconMenu() {
                     <DropdownMenuItem onSelect={() => setUserActionsDialogs({ ...userActionsDialogs, recoveryAccount: true })}>
                         Recuperar conta
                     </DropdownMenuItem>
-                    <DropdownMenuItem>Nova Conta</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setUserActionsDialogs({ ...userActionsDialogs, newAccount: true })}>
+                        Nova Conta
+                    </DropdownMenuItem>
                     <DropdownMenuItem onSelect={() => setUserActionsDialogs({ ...userActionsDialogs, closeAccount: true })}>
                         Apagar conta
                     </DropdownMenuItem>
@@ -156,6 +163,31 @@ export default function UserIconMenu() {
                 </DialogContent>
             </Dialog>
 
+            {/* New Account Modal */}
+            <Dialog
+                open={userActionsDialogs.newAccount}
+                onOpenChange={(open) => setUserActionsDialogs({ ...userActionsDialogs, newAccount: open })}
+            >
+                <DialogContent className="w-96">
+                    <DialogHeader>
+                        <DialogTitle>Você tem certeza que deseja criar uma nova conta?</DialogTitle>
+                        <div className="flex flex-col">
+                            <DialogDescription className="mb-3">
+                                Você podera continuar acessando sua conta antiga, para isso tenha certeza de guardar seu UID em um
+                                local seguro.
+                            </DialogDescription>
+                            <DialogDescription className="mb-3">
+                                Para isso, clique no seu ícone de usuário e selecione a opção 'Recuperar conta'. Insira seu UID e
+                                confirme que já estará utilizando a conta desejada.
+                            </DialogDescription>
+                            <Button type="submit" size="sm" className="px-3" onClick={handleCreateNewAccount}>
+                                Confirmar
+                            </Button>
+                        </div>
+                    </DialogHeader>
+                </DialogContent>
+            </Dialog>
+
             {/* Delete Account Modal */}
             <Dialog
                 open={userActionsDialogs.closeAccount}
@@ -192,8 +224,6 @@ export default function UserIconMenu() {
                     </DialogHeader>
                 </DialogContent>
             </Dialog>
-
-            {showFirstTimeDialog && <FirstTimeDialog />}
         </>
     );
 }

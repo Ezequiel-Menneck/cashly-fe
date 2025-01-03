@@ -14,7 +14,7 @@ import { Input } from '../ui/input';
 const formSchema = z.object({
     username: z
         .string()
-        .min(5, { message: 'O nome de usuário deve ter pelo menos 5 caracteres' })
+        .min(3, { message: 'O nome de usuário deve ter pelo menos 3 caracteres' })
         .max(30, { message: 'O nome de usuário deve ter no máximo 30 caracteres' }),
     baseSalary: z
         .number({
