@@ -1,6 +1,7 @@
 import { fetchCreateUser } from '@/api/user';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useSaveUserInfo, useUserInfo } from '@/hooks/useUserInfo';
+import { formatToBRL } from '@/utils/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Separator } from '@radix-ui/react-dropdown-menu';
 import { useForm } from 'react-hook-form';
@@ -83,12 +84,24 @@ export default function FirstTimeDialog({ open, onClose }: { open: boolean; onCl
                                                 <FormLabel>Salário base mensal</FormLabel>
                                                 <FormControl>
                                                     <Input
-                                                        type="number"
-                                                        placeholder="0"
-                                                        value={field.value ?? ''}
+                                                        placeholder="R$ 0,00"
+                                                        value={field.value ? formatToBRL(field.value / 100) : ''}
                                                         onChange={(e) => {
-                                                            const value = e.target.value;
-                                                            field.onChange(value ? Number(value) : undefined);
+                                                            const rawValue = e.target.value.replace(/\D/g, '');
+                                                            const numberValue = rawValue ? Number(rawValue) : 0;
+                                                            field.onChange(numberValue);
+                                                        }}
+                                                        onKeyDown={(e) => {
+                                                            if (
+                                                                !/[\d]/.test(e.key) &&
+                                                                !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight'].includes(
+                                                                    e.key
+                                                                ) &&
+                                                                !e.ctrlKey &&
+                                                                !e.metaKey
+                                                            ) {
+                                                                e.preventDefault();
+                                                            }
                                                         }}
                                                     />
                                                 </FormControl>

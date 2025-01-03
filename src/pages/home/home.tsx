@@ -10,7 +10,7 @@ export default function Home() {
         const isFirstTime = !localStorage.getItem('isFirstTime');
         if (isFirstTime) {
             setShowFirstTimeDialog(true);
-            localStorage.setItem('isFirstTime', 'true');
+            localStorage.setItem('isFirstTime', 'false');
         }
     }, []);
 
