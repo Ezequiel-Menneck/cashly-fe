@@ -3,7 +3,6 @@ import ErrorPage from './layout/error-page';
 import Layout from './layout/layout';
 import { Crypto } from './pages/crypto/crypto';
 import Financial from './pages/financial/financial';
-import Home from './pages/home/home';
 
 const router = createBrowserRouter([
     {
@@ -13,12 +12,13 @@ const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                element: <Home />
-            },
-            {
-                path: '/financial',
                 element: <Financial />
+                // element: <Home />
             },
+            // {
+            //     path: '/financial',
+            //     element: <Financial />
+            // },
             {
                 path: '/crypto',
                 element: <Crypto />
