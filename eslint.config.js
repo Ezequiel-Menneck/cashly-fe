@@ -7,11 +7,7 @@ import tseslint from 'typescript-eslint';
 export default tseslint.config(
     { ignores: ['dist'] },
     {
-        extends: [
-            js.configs.recommended,
-            ...tseslint.configs.recommended,
-            'plugin:prettier/recommended'
-        ],
+        extends: [js.configs.recommended, ...tseslint.configs.recommended, 'plugin:prettier/recommended'],
         files: ['**/*.{ts,tsx}'],
         languageOptions: {
             ecmaVersion: 2020,
@@ -32,10 +28,7 @@ export default tseslint.config(
             '@typescript-eslint/semi': ['error', 'always'], // Sempre usa ponto e vírgula
             '@typescript-eslint/quotes': ['error', 'single'], // Usa aspas simples
             '@typescript-eslint/comma-dangle': ['error', 'never'],
-            'react-refresh/only-export-components': [
-                'warn',
-                { allowConstantExport: true }
-            ]
+            'react-refresh/only-export-components': ['warn', { allowConstantExport: true }]
         }
     }
 );
