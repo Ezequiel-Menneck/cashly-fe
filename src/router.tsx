@@ -13,12 +13,7 @@ const router = createBrowserRouter([
             {
                 index: true,
                 element: <Financial />
-                // element: <Home />
             },
-            // {
-            //     path: '/financial',
-            //     element: <Financial />
-            // },
             {
                 path: '/crypto',
                 element: <Crypto />
