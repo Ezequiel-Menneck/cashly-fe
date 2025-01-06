@@ -2,6 +2,7 @@ import { fetchUserData } from '@/api/user';
 import { GraphQLResponse } from '@/graphql/dataWrapper';
 import { FindUserByIdentifierResponse } from '@/graphql/types';
 import { useUserInfo } from '@/hooks/useUserInfo';
+import { formatDate } from '@/utils/utils';
 import { useQuery } from '@tanstack/react-query';
 import { Edit2Icon, Trash2 } from 'lucide-react';
 import LoadingFetchData from '../loading-fetch-data/loading-fetch-data';
@@ -31,7 +32,7 @@ export default function TransactionCard() {
                         <CardHeader className="flex flex-row items-start justify-between">
                             <div>
                                 <CardTitle className="mb-2">{t.description}</CardTitle>
-                                <CardDescription>{t.transactionDate}</CardDescription>
+                                <CardDescription>{formatDate(t.transactionDate)}</CardDescription>
                             </div>
                             <div className="flex gap-2">
                                 <Button className="bg-primary">
