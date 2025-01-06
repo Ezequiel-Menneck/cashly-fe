@@ -4,11 +4,13 @@ import { deleteUserByIdentifierMutation } from '@/graphql/mutations/deleteUserBy
 import { findUserByIdentifierQuery } from '@/graphql/queries/findUserByIdentifier';
 import { getTransactionsCountByDateQuery } from '@/graphql/queries/getTransactionsByDate';
 import { getTransactionsCountByCategoryQuery } from '@/graphql/queries/getTransactionsCountByCategory';
+import { getUserBaseSalaryAndSumTransactionsAmountQuery } from '@/graphql/queries/getUserBaseSalaryAndSumTransactionsAmount';
 import {
     CreateUserRequestDTO,
     FindUserByIdentifierResponse,
     TransactionsCountByCategory,
-    TransactionsCountByDate
+    TransactionsCountByDate,
+    UserBaseSalaryAndTransactionsSum
 } from '@/graphql/types';
 import { axiosInstance } from '@/services/axios-instance';
 
@@ -66,6 +68,21 @@ export async function fetchDeleteUserAccount(userUid: string): Promise<Boolean> 
             query: deleteUserByIdentifierMutation,
             variables: {
                 identifier: userUid
+            }
+        }
+    });
+}
+
+export async function fetchUserBaseSalaryAndSumOfTransactionsAmount(
+    userUid: string,
+    month: number
+): Promise<GraphQLResponse<UserBaseSalaryAndTransactionsSum>> {
+    return await axiosInstance<GraphQLResponse<UserBaseSalaryAndTransactionsSum>>({
+        data: {
+            query: getUserBaseSalaryAndSumTransactionsAmountQuery,
+            variables: {
+                identifier: userUid,
+                month
             }
         }
     });

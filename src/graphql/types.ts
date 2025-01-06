@@ -43,3 +43,12 @@ export type CreateUserRequestDTO = {
     identifier: string;
     baseSalary: number;
 };
+
+type UserBaseSalaryAndSumTransactionsAmount = {
+    baseSalary: number;
+    transactionsAmountSum: number;
+};
+
+export type UserBaseSalaryAndTransactionsSum = {
+    getUserBaseSalaryAndSumTransactionsAmount: UserBaseSalaryAndSumTransactionsAmount;
+};

@@ -73,7 +73,7 @@ export default function TransactionsByCategoryChart() {
     }
 
     return (
-        <Card className="w-full sm:w-2/5">
+        <Card className="w-full sm:w-[30%]">
             <CardHeader className="pb-2">
                 <CardTitle>Compras por categoria</CardTitle>
                 <CardDescription>{getMonthName()}</CardDescription>

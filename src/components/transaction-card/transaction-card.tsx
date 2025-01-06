@@ -412,7 +412,7 @@ export default function TransactionCard() {
             <div>Filtros</div>
             {transactions &&
                 transactions.map((t) => (
-                    <Card className="mb-4">
+                    <Card className="mb-4" key={t.id}>
                         <CardHeader className="flex flex-row items-start justify-between">
                             <div>
                                 <CardTitle className="mb-2">{t.description}</CardTitle>

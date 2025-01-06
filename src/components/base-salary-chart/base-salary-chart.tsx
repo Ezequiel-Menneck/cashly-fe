@@ -3,8 +3,14 @@
 import { ArrowUpIcon } from 'lucide-react';
 import { PolarAngleAxis, RadialBar, RadialBarChart } from 'recharts';
 
+import { fetchUserBaseSalaryAndSumOfTransactionsAmount } from '@/api/user';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { GraphQLResponse } from '@/graphql/dataWrapper';
+import { UserBaseSalaryAndTransactionsSum } from '@/graphql/types';
+import { useUserInfo } from '@/hooks/useUserInfo';
+import { useQuery } from '@tanstack/react-query';
+import LoadingFetchData from '../loading-fetch-data/loading-fetch-data';
 
 const chartConfig = {
     amount: {
@@ -14,16 +20,33 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function BaseSalaryChart() {
+    const { isPending, data } = useQuery<GraphQLResponse<UserBaseSalaryAndTransactionsSum>>({
+        queryKey: ['getUserBaseSalaryAndSumTransactionsAmount'],
+        queryFn: () => fetchUserBaseSalaryAndSumOfTransactionsAmount(useUserInfo().uid, new Date().getMonth())
+    });
+
+    console.log(data);
+
+    if (isPending) {
+        return <LoadingFetchData />;
+    }
+
     const chartData = [
         {
             name: 'Current Balance',
-            amount: 500,
-            baseSalary: 5000,
+            amount:
+                data?.data?.getUserBaseSalaryAndSumTransactionsAmount != undefined
+                    ? data.data.getUserBaseSalaryAndSumTransactionsAmount.transactionsAmountSum / 100
+                    : 0,
+            baseSalary:
+                data?.data?.getUserBaseSalaryAndSumTransactionsAmount != undefined
+                    ? data.data.getUserBaseSalaryAndSumTransactionsAmount.baseSalary / 100
+                    : 0,
             fill: 'url(#colorGradient)'
         }
     ];
     const { amount, baseSalary } = chartData[0];
-    const percentageLeft = 100 - (amount / baseSalary) * 100;
+    const percentageLeft = baseSalary != 0 ? 100 - (amount / baseSalary) * 100 : 0;
     const daysLeft = 30 - new Date().getDate();
 
     return (
@@ -42,7 +65,7 @@ export function BaseSalaryChart() {
                     <RadialBarChart
                         width={200}
                         height={100}
-                        cx={120}
+                        cx={100}
                         cy={80}
                         innerRadius={60}
                         outerRadius={80}
@@ -63,8 +86,8 @@ export function BaseSalaryChart() {
                     </RadialBarChart>
                 </ChartContainer>
             </CardContent>
-            <CardFooter className="flex justify-between">
-                <div className="flex items-center space-x-2">
+            <CardFooter className="flex flex-col items-start">
+                <div className="flex items-center space-x-2 mb-1">
                     <ArrowUpIcon className="h-4 w-4 text-green-500" />
                     <span className="text-sm font-medium text-green-500">{percentageLeft.toFixed(1)}% restante</span>
                 </div>

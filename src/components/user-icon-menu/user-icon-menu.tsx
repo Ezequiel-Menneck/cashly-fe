@@ -56,16 +56,19 @@ export default function UserIconMenu() {
         }
 
         useSaveUserInfo({ uid: value.uid, username: userData.data?.findUserByIdentifier.username });
-        queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByDate'] });
-        queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByCategory'] });
-
+        resetUserQueries();
         setUserActionsDialogs({ ...userActionsDialogs, recoveryAccount: false });
     }
 
     function resetUserInfo() {
         localStorage.removeItem('userINFO');
+        resetUserQueries();
+    }
+
+    function resetUserQueries() {
         queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByDate'] });
         queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByCategory'] });
+        queryClient.invalidateQueries({ queryKey: ['getUserBaseSalaryAndSumTransactionsAmount'] });
     }
 
     async function handleDeleteAccount(): Promise<void> {
