@@ -22,10 +22,8 @@ const chartConfig = {
 export function BaseSalaryChart() {
     const { isPending, data } = useQuery<GraphQLResponse<UserBaseSalaryAndTransactionsSum>>({
         queryKey: ['getUserBaseSalaryAndSumTransactionsAmount'],
-        queryFn: () => fetchUserBaseSalaryAndSumOfTransactionsAmount(useUserInfo().uid, new Date().getMonth())
+        queryFn: () => fetchUserBaseSalaryAndSumOfTransactionsAmount(useUserInfo().uid, new Date().getMonth() + 1)
     });
-
-    console.log(data);
 
     if (isPending) {
         return <LoadingFetchData />;
