@@ -1,6 +1,7 @@
 import { GraphQLResponse } from '@/graphql/dataWrapper';
 import { createUserMutation } from '@/graphql/mutations/createUser';
 import { deleteUserByIdentifierMutation } from '@/graphql/mutations/deleteUserByIdentifier';
+import { deleteTransactionMutation } from '@/graphql/mutations/deleteUserTransaction';
 import { findUserByIdentifierQuery } from '@/graphql/queries/findUserByIdentifier';
 import { getTransactionsCountByDateQuery } from '@/graphql/queries/getTransactionsByDate';
 import { getTransactionsCountByCategoryQuery } from '@/graphql/queries/getTransactionsCountByCategory';
@@ -83,6 +84,18 @@ export async function fetchUserBaseSalaryAndSumOfTransactionsAmount(
             variables: {
                 identifier: userUid,
                 month
+            }
+        }
+    });
+}
+
+export async function fetchDeleteUserTransaction(userUid: string, transactionId: string): Promise<Boolean> {
+    return await axiosInstance<Boolean>({
+        data: {
+            query: deleteTransactionMutation,
+            variables: {
+                identifier: userUid,
+                transactionId
             }
         }
     });

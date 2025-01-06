@@ -1,22 +1,45 @@
-import { fetchUserData } from '@/api/user';
+import { fetchDeleteUserTransaction, fetchUserData } from '@/api/user';
 import { GraphQLResponse } from '@/graphql/dataWrapper';
 import { FindUserByIdentifierResponse } from '@/graphql/types';
 import { useUserInfo } from '@/hooks/useUserInfo';
 import { formatDate } from '@/utils/utils';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Edit2Icon, Trash2 } from 'lucide-react';
+import { useState } from 'react';
 import LoadingFetchData from '../loading-fetch-data/loading-fetch-data';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
 
 export default function TransactionCard() {
+    const [excludeTransactionModal, setExcludeTransactionModal] = useState<boolean>(false);
+    const [selectedTransactionId, setSelectedTransactionId] = useState<string>('');
+    const queryClient = useQueryClient();
     const userInfo = useUserInfo();
 
     const { isPending, data } = useQuery<GraphQLResponse<FindUserByIdentifierResponse>>({
         queryKey: ['getUserData'],
         queryFn: () => fetchUserData(userInfo.uid)
     });
+
+    function handleExcludeTransactionModal() {
+        setExcludeTransactionModal(false);
+    }
+
+    function handleOpenExcludeModal(transactionId: string) {
+        setSelectedTransactionId(transactionId);
+        setExcludeTransactionModal(true);
+    }
+
+    async function handleExcludeTransaction() {
+        await fetchDeleteUserTransaction(userInfo.uid, selectedTransactionId);
+        setExcludeTransactionModal(false);
+        queryClient.invalidateQueries({ queryKey: ['getUserData'] });
+        queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByDate'] });
+        queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByCategory'] });
+        queryClient.invalidateQueries({ queryKey: ['getUserBaseSalaryAndSumTransactionsAmount'] });
+    }
 
     if (isPending) {
         return <LoadingFetchData />;
@@ -35,7 +58,7 @@ export default function TransactionCard() {
                                 <CardDescription>{formatDate(t.transactionDate)}</CardDescription>
                             </div>
                             <div className="flex gap-2">
-                                <Button className="bg-primary">
+                                <Button className="bg-primary" onClick={() => handleOpenExcludeModal(t.id)}>
                                     <Trash2 />
                                 </Button>
                                 <Button className="bg-edit hover:bg-edit-hover">
@@ -58,6 +81,18 @@ export default function TransactionCard() {
                         </CardContent>
                     </Card>
                 ))}
+
+            <Dialog open={excludeTransactionModal} onOpenChange={handleExcludeTransactionModal}>
+                <DialogContent className="w-72">
+                    <DialogHeader>
+                        <DialogTitle>Confirmar exclusão de transação</DialogTitle>
+                        <DialogDescription>Você tem certeza que deseja excluir essa transação?</DialogDescription>
+                    </DialogHeader>
+                    <Button size="sm" className="px-3" onClick={handleExcludeTransaction}>
+                        Confirmar
+                    </Button>
+                </DialogContent>
+            </Dialog>
         </>
     );
 }
