@@ -7,6 +7,16 @@ export const formatToBRL = (value: number): string => {
     });
 };
 
+export const formatToBRLToShow = (value: number): string => {
+    value = value / 100;
+    return value.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+};
+
 export function formatDate(isoString: string) {
     const date = new Date(isoString);
     const options: Intl.DateTimeFormatOptions = {
