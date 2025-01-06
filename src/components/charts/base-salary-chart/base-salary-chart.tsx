@@ -10,7 +10,7 @@ import { GraphQLResponse } from '@/graphql/dataWrapper';
 import { UserBaseSalaryAndTransactionsSum } from '@/graphql/types';
 import { useUserInfo } from '@/hooks/useUserInfo';
 import { useQuery } from '@tanstack/react-query';
-import LoadingFetchData from '../loading-fetch-data/loading-fetch-data';
+import LoadingFetchData from '../../loading-fetch-data/loading-fetch-data';
 
 const chartConfig = {
     amount: {

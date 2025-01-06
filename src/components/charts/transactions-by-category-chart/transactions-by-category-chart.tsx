@@ -8,7 +8,7 @@ import { TransactionsCountByCategory } from '@/graphql/types';
 import { useUserInfo } from '@/hooks/useUserInfo';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import LoadingFetchData from '../loading-fetch-data/loading-fetch-data';
+import LoadingFetchData from '../../loading-fetch-data/loading-fetch-data';
 
 type ChartData = {
     category: string;
