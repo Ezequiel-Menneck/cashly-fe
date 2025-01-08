@@ -1,4 +1,4 @@
-type Transaction = {
+export type Transaction = {
     id: string;
     amount: number;
     transactionDate: string;
@@ -44,6 +44,18 @@ export type CreateUserRequestDTO = {
     baseSalary: number;
 };
 
+export type UpdateTransactionDTO = {
+    transactionId: string;
+    identifier: string;
+    amount: number;
+    transactionDate: Date;
+    description: string;
+    type: TransactionType;
+    categoryName: string | null;
+};
+
+type TransactionType = 'CREDIT' | 'DEBIT';
+
 type UserBaseSalaryAndSumTransactionsAmount = {
     baseSalary: number;
     transactionsAmountSum: number;
@@ -51,4 +63,13 @@ type UserBaseSalaryAndSumTransactionsAmount = {
 
 export type UserBaseSalaryAndTransactionsSum = {
     getUserBaseSalaryAndSumTransactionsAmount: UserBaseSalaryAndSumTransactionsAmount;
+};
+
+type CategoryNameAndId = {
+    id: string;
+    name: string;
+};
+
+export type CategoryNameAndIdList = {
+    findAll: CategoryNameAndId[];
 };

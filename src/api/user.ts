@@ -2,15 +2,19 @@ import { GraphQLResponse } from '@/graphql/dataWrapper';
 import { createUserMutation } from '@/graphql/mutations/createUser';
 import { deleteUserByIdentifierMutation } from '@/graphql/mutations/deleteUserByIdentifier';
 import { deleteTransactionMutation } from '@/graphql/mutations/deleteUserTransaction';
+import { updateTransactionMutation } from '@/graphql/mutations/updateTransaction';
+import { findAllCategoryQuery } from '@/graphql/queries/findAllCategory';
 import { findUserByIdentifierQuery } from '@/graphql/queries/findUserByIdentifier';
 import { getTransactionsCountByDateQuery } from '@/graphql/queries/getTransactionsByDate';
 import { getTransactionsCountByCategoryQuery } from '@/graphql/queries/getTransactionsCountByCategory';
 import { getUserBaseSalaryAndSumTransactionsAmountQuery } from '@/graphql/queries/getUserBaseSalaryAndSumTransactionsAmount';
 import {
+    CategoryNameAndIdList,
     CreateUserRequestDTO,
     FindUserByIdentifierResponse,
     TransactionsCountByCategory,
     TransactionsCountByDate,
+    UpdateTransactionDTO,
     UserBaseSalaryAndTransactionsSum
 } from '@/graphql/types';
 import { axiosInstance } from '@/services/axios-instance';
@@ -96,6 +100,31 @@ export async function fetchDeleteUserTransaction(userUid: string, transactionId:
             variables: {
                 identifier: userUid,
                 transactionId
+            }
+        }
+    });
+}
+
+export async function fetchGetAllCategories(): Promise<GraphQLResponse<CategoryNameAndIdList>> {
+    return await axiosInstance<Promise<GraphQLResponse<CategoryNameAndIdList>>>({
+        data: {
+            query: findAllCategoryQuery
+        }
+    });
+}
+
+export async function fetchUpdateTransaction(updateTransactionDTO: UpdateTransactionDTO): Promise<Boolean> {
+    return await axiosInstance<Promise<Boolean>>({
+        data: {
+            query: updateTransactionMutation,
+            variables: {
+                identifier: updateTransactionDTO.identifier,
+                transactionId: updateTransactionDTO.transactionId,
+                amount: updateTransactionDTO.amount,
+                transactionDate: updateTransactionDTO.transactionDate,
+                description: updateTransactionDTO.description,
+                type: updateTransactionDTO.type,
+                categoryName: updateTransactionDTO.identifier
             }
         }
     });
