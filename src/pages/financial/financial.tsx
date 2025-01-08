@@ -29,7 +29,6 @@ export default function Financial() {
             </div>
 
             <TransactionCard />
-
             <FirstTimeDialog open={showFirstTimeDialog} onClose={handleCloseForm} />
         </>
     );

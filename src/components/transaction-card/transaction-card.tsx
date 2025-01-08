@@ -1,7 +1,7 @@
 import { fetchDeleteUserTransaction, fetchGetAllCategories, fetchUpdateTransaction, fetchUserData } from '@/api/user';
+import { useUser } from '@/context/UserContext';
 import { GraphQLResponse } from '@/graphql/dataWrapper';
-import { FindUserByIdentifierResponse, Transaction } from '@/graphql/types';
-import { useUserInfo } from '@/hooks/useUserInfo';
+import { FindUserByIdentifierResponse, Transaction, TransactionType } from '@/graphql/types';
 import { formatDate, formatToBRLToShow } from '@/utils/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -9,6 +9,7 @@ import { Edit2Icon, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { FilterComponent } from '../filter-component/filter-component';
 import LoadingFetchData from '../loading-fetch-data/loading-fetch-data';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
@@ -45,16 +46,39 @@ export default function TransactionCard() {
     });
     const [selectedTransaction, setSelectedTransaction] = useState<Transaction>();
     const queryClient = useQueryClient();
-    const userInfo = useUserInfo();
+    const { userInfo } = useUser();
     const { isPending, data } = useQuery<GraphQLResponse<FindUserByIdentifierResponse>>({
-        queryKey: ['getUserData'],
+        queryKey: ['getUserData', userInfo.uid],
         queryFn: () => fetchUserData(userInfo.uid)
     });
     const { data: categoriesData } = useQuery({
         queryKey: ['getAllCategories'],
-        queryFn: fetchGetAllCategories,
-        enabled: transactionModals.editModal
+        queryFn: fetchGetAllCategories
     });
+    console.log(data);
+    const [filteredData, setFilteredData] = useState<Transaction[] | undefined>(
+        data?.data?.findUserByIdentifier?.transactions || []
+    );
+    const categories =
+        categoriesData?.data?.findAll != null && categoriesData?.data?.findAll.length > 0
+            ? categoriesData?.data?.findAll.map((category) => category.name)
+            : [''];
+    const types: TransactionType[] = ['CREDIT', 'DEBIT'];
+
+    const handleFilterChange = (filters: { category: string; date: Date | undefined; type: string }) => {
+        console.log(data);
+        if (data?.data?.findUserByIdentifier != null && data.data.findUserByIdentifier.transactions.length > 0) {
+            const transactions = data.data.findUserByIdentifier.transactions;
+            const filtered = transactions.filter((item) => {
+                const categoryMatch = !filters.category || item.categoryName === filters.category;
+                const typeMatch = !filters.type || item.type === filters.type;
+                const dateMatch = !filters.date || new Date(item.transactionDate).toDateString() === filters.date.toDateString(); // Updated date comparison
+                return categoryMatch && typeMatch && dateMatch;
+            });
+            console.log(filtered);
+            setFilteredData(filtered);
+        }
+    };
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -82,31 +106,37 @@ export default function TransactionCard() {
         }
     }, [selectedTransaction, form]);
 
+    useEffect(() => {
+        console.log('aaaaaa34923049230-4923-0490-2fdslkfjsdlkfjls');
+        console.log(userInfo);
+        handleFilterChange({ category: '', date: undefined, type: '' });
+    }, [data]);
+
     function handleOpenModal(transactionId: Transaction, modalType: 'deleteModal' | 'editModal') {
         setSelectedTransaction(transactionId);
         setTransactionModals({ ...transactionModals, [modalType]: true });
+    }
+
+    function resetUserQueries() {
+        queryClient.invalidateQueries({ queryKey: ['getUserData'] });
+        queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByDate'] });
+        queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByCategory'] });
+        queryClient.invalidateQueries({ queryKey: ['getUserBaseSalaryAndSumTransactionsAmount'] });
     }
 
     async function handleExcludeTransaction() {
         if (selectedTransaction) {
             await fetchDeleteUserTransaction(userInfo.uid, selectedTransaction.id);
             setTransactionModals({ ...transactionModals, deleteModal: false });
-            queryClient.invalidateQueries({ queryKey: ['getUserData'] });
-            queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByDate'] });
-            queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByCategory'] });
-            queryClient.invalidateQueries({ queryKey: ['getUserBaseSalaryAndSumTransactionsAmount'] });
+            resetUserQueries();
         }
     }
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         if (selectedTransaction) {
-            console.log('aaaa');
             await fetchUpdateTransaction({ identifier: userInfo.uid, transactionId: selectedTransaction.id, ...values });
             setTransactionModals({ ...transactionModals, editModal: false });
-            queryClient.invalidateQueries({ queryKey: ['getUserData'] });
-            queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByDate'] });
-            queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByCategory'] });
-            queryClient.invalidateQueries({ queryKey: ['getUserBaseSalaryAndSumTransactionsAmount'] });
+            resetUserQueries();
         }
     }
 
@@ -116,10 +146,9 @@ export default function TransactionCard() {
 
     return (
         <>
-            <div>Filtros</div>
-            {data?.data?.findUserByIdentifier &&
-                data.data.findUserByIdentifier.transactions.length > 0 &&
-                data.data.findUserByIdentifier.transactions.map((t) => (
+            <FilterComponent categories={categories} types={types} onFilterChange={handleFilterChange} />
+            {filteredData &&
+                filteredData.map((t) => (
                     <Card className="mb-4" key={t.id}>
                         <CardHeader className="flex flex-row items-start justify-between pt-3 pb-3 pr-6 pl-6">
                             <div>

@@ -13,9 +13,9 @@ import {
     ChartTooltipContent
 } from '@/components/ui/chart';
 import { Select, SelectContent, SelectItem } from '@/components/ui/select';
+import { useUser } from '@/context/UserContext';
 import { GraphQLResponse } from '@/graphql/dataWrapper';
 import { DateOfTransactionsAndTransactionsCount, TransactionsCountByDate } from '@/graphql/types';
-import { useUserInfo } from '@/hooks/useUserInfo';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import LoadingFetchData from '../../loading-fetch-data/loading-fetch-data';
@@ -36,13 +36,14 @@ type ChartData = {
 };
 
 export function TransactionsByDateChart() {
+    const { userInfo } = useUser();
     const currentMonth = (new Date().getMonth() + 1).toString();
     const [timeRange, setTimeRange] = useState(currentMonth);
     const [chartData, setChartData] = useState<ChartData[]>([]);
     const [mostRecentTransaction, setMostRecentTransaction] = useState<DateOfTransactionsAndTransactionsCount>();
     const { isPending, data } = useQuery<GraphQLResponse<TransactionsCountByDate>>({
         queryKey: ['getTransactionsCountByDate'],
-        queryFn: () => fetchTransactionsCountByDate(useUserInfo().uid)
+        queryFn: () => fetchTransactionsCountByDate(userInfo.uid)
     });
 
     useEffect(() => {

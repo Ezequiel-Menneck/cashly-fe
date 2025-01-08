@@ -3,9 +3,9 @@ import { Bar, BarChart, XAxis, YAxis } from 'recharts';
 import { fetchTransactionsCountByCategory } from '@/api/user';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { useUser } from '@/context/UserContext';
 import { GraphQLResponse } from '@/graphql/dataWrapper';
 import { TransactionsCountByCategory } from '@/graphql/types';
-import { useUserInfo } from '@/hooks/useUserInfo';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import LoadingFetchData from '../../loading-fetch-data/loading-fetch-data';
@@ -26,11 +26,12 @@ function getMonthName(): String {
 }
 
 export default function TransactionsByCategoryChart() {
+    const { userInfo } = useUser();
     const [chartData, setChartData] = useState<ChartData[]>([]);
     const [chartConfig, setChartConfig] = useState<ChartConfigType>({});
     const { isPending, data } = useQuery<GraphQLResponse<TransactionsCountByCategory>>({
         queryKey: ['getTransactionsCountByCategory'],
-        queryFn: () => fetchTransactionsCountByCategory(useUserInfo().uid)
+        queryFn: () => fetchTransactionsCountByCategory(userInfo.uid)
     });
 
     useEffect(() => {

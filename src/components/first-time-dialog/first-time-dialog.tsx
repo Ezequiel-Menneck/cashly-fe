@@ -1,6 +1,6 @@
 import { fetchCreateUser } from '@/api/user';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { useSaveUserInfo, useUserInfo } from '@/hooks/useUserInfo';
+import { useUser } from '@/context/UserContext';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Separator } from '@radix-ui/react-dropdown-menu';
 import { useForm } from 'react-hook-form';
@@ -24,7 +24,8 @@ const formSchema = z.object({
 });
 
 export default function FirstTimeDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
-    const userINFO = useUserInfo();
+    // const userINFO = useUserInfo();
+    const { userInfo, updateUser } = useUser();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -35,8 +36,8 @@ export default function FirstTimeDialog({ open, onClose }: { open: boolean; onCl
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        useSaveUserInfo({ uid: userINFO.uid, username: values.username });
-        await fetchCreateUser({ username: values.username, identifier: userINFO.uid, baseSalary: values.baseSalary });
+        updateUser({ uid: userInfo.uid, username: values.username });
+        await fetchCreateUser({ username: values.username, identifier: userInfo.uid, baseSalary: values.baseSalary });
         form.reset();
         onClose();
     }
@@ -55,9 +56,8 @@ export default function FirstTimeDialog({ open, onClose }: { open: boolean; onCl
                                     </DialogDescription>
                                     <Separator />
                                     <DialogDescription className="mt-2">
-                                        Sua "conta" é representada pelo seu UID: {<strong>{userINFO?.uid}</strong>}. Guarde-o em
-                                        um local securo pois ele é a sua chave para acessar suas informações de qualquer
-                                        dispositivo
+                                        Sua "conta" é representada pelo seu UID: {<strong>{userInfo.uid}</strong>}. Guarde-o em um
+                                        local securo pois ele é a sua chave para acessar suas informações de qualquer dispositivo
                                     </DialogDescription>
                                     <DialogDescription className="mt-2 mb-2">
                                         Digite o seu nome de usuário desejado e seu salário base para começar a usar o{' '}

@@ -6,9 +6,9 @@ import { PolarAngleAxis, RadialBar, RadialBarChart } from 'recharts';
 import { fetchUserBaseSalaryAndSumOfTransactionsAmount } from '@/api/user';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { useUser } from '@/context/UserContext';
 import { GraphQLResponse } from '@/graphql/dataWrapper';
 import { UserBaseSalaryAndTransactionsSum } from '@/graphql/types';
-import { useUserInfo } from '@/hooks/useUserInfo';
 import { useQuery } from '@tanstack/react-query';
 import LoadingFetchData from '../../loading-fetch-data/loading-fetch-data';
 
@@ -20,9 +20,10 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function BaseSalaryChart() {
+    const { userInfo } = useUser();
     const { isPending, data } = useQuery<GraphQLResponse<UserBaseSalaryAndTransactionsSum>>({
         queryKey: ['getUserBaseSalaryAndSumTransactionsAmount'],
-        queryFn: () => fetchUserBaseSalaryAndSumOfTransactionsAmount(useUserInfo().uid, new Date().getMonth() + 1)
+        queryFn: () => fetchUserBaseSalaryAndSumOfTransactionsAmount(userInfo.uid, new Date().getMonth() + 1)
     });
 
     if (isPending) {

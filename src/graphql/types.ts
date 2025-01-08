@@ -8,7 +8,7 @@ export type Transaction = {
     categoryName: string;
 };
 
-type User = {
+export type User = {
     id: string;
     identifier: string;
     username: string;
@@ -54,7 +54,7 @@ export type UpdateTransactionDTO = {
     categoryName: string | null;
 };
 
-type TransactionType = 'CREDIT' | 'DEBIT';
+export type TransactionType = 'CREDIT' | 'DEBIT';
 
 type UserBaseSalaryAndSumTransactionsAmount = {
     baseSalary: number;

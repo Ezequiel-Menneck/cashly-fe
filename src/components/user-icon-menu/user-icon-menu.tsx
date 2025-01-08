@@ -1,5 +1,5 @@
 import { fetchDeleteUserAccount, fetchUserData } from '@/api/user';
-import { generateUserUID, UserUidAndUsername, useSaveUserInfo, useUserInfo } from '@/hooks/useUserInfo';
+import { generateUserUID, UserUidAndUsername, useUser } from '@/context/UserContext';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import { Copy } from 'lucide-react';
@@ -22,7 +22,7 @@ const formSchema = z.object({
 });
 
 export default function UserIconMenu() {
-    const UID = useUserInfo().uid || 'None';
+    const { userInfo, updateUser } = useUser();
     const queryClient = useQueryClient();
     const [userActionsDialogs, setUserActionsDialogs] = useState({
         uidDialog: false,
@@ -38,7 +38,7 @@ export default function UserIconMenu() {
     };
 
     const handleCopy = () => {
-        navigator.clipboard.writeText(UID);
+        navigator.clipboard.writeText(userInfo.uid);
     };
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -55,9 +55,12 @@ export default function UserIconMenu() {
             return;
         }
 
-        useSaveUserInfo({ uid: value.uid, username: userData.data?.findUserByIdentifier.username });
-        resetUserQueries();
+        updateUser({
+            uid: value.uid,
+            username: userData.data?.findUserByIdentifier.username ? userData.data.findUserByIdentifier.username : ''
+        });
         setUserActionsDialogs({ ...userActionsDialogs, recoveryAccount: false });
+        resetUserQueries();
     }
 
     function resetUserInfo() {
@@ -66,26 +69,27 @@ export default function UserIconMenu() {
     }
 
     function resetUserQueries() {
+        queryClient.invalidateQueries({ queryKey: ['getUserData'] });
         queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByDate'] });
         queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByCategory'] });
         queryClient.invalidateQueries({ queryKey: ['getUserBaseSalaryAndSumTransactionsAmount'] });
     }
 
     async function handleDeleteAccount(): Promise<void> {
-        const deleted = await fetchDeleteUserAccount(UID);
+        const deleted = await fetchDeleteUserAccount(userInfo.uid);
         if (deleted) {
-            resetUserInfo();
             setUserActionsDialogs({ ...userActionsDialogs, closeAccount: false });
             setShowFirstTimeDialog(true);
+            resetUserInfo();
         }
     }
 
     function handleCreateNewAccount(): void {
-        resetUserInfo();
         const userInfo: UserUidAndUsername = { uid: generateUserUID(), username: '' };
-        useSaveUserInfo(userInfo);
+        updateUser(userInfo);
         setUserActionsDialogs({ ...userActionsDialogs, newAccount: false });
         setShowFirstTimeDialog(true);
+        resetUserInfo();
     }
 
     return (
@@ -122,7 +126,7 @@ export default function UserIconMenu() {
                     <DialogHeader>
                         <DialogTitle>UID</DialogTitle>
                         <div className="flex items-center justify-between">
-                            <DialogDescription>UID: {UID}</DialogDescription>
+                            <DialogDescription>UID: {userInfo.uid}</DialogDescription>
                             <Button type="submit" size="sm" className="px-3" onClick={handleCopy}>
                                 <span className="sr-only">Copy</span>
                                 <Copy />
