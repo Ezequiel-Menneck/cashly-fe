@@ -142,7 +142,7 @@ export default function TransactionCard() {
                                     <span>Categoria da transação: {t.categoryName}</span>
                                 </div>
                                 <Badge
-                                    className={`${t.type == 'CREDIT' ? 'bg-green-500' : 'bg-red-500'} text-black hover:bg-slate-900 w-fit`}
+                                    className={`${t.type == 'CREDIT' ? 'bg-green-500 hover:bg-green-800' : 'bg-red-500 hover:bg-red-800'} text-black w-fit`}
                                 >
                                     {t.type == 'CREDIT' ? 'Credito' : 'Débito'}
                                 </Badge>
