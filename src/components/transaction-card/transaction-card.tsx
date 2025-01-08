@@ -121,7 +121,7 @@ export default function TransactionCard() {
                 data.data.findUserByIdentifier.transactions.length > 0 &&
                 data.data.findUserByIdentifier.transactions.map((t) => (
                     <Card className="mb-4" key={t.id}>
-                        <CardHeader className="flex flex-row items-start justify-between">
+                        <CardHeader className="flex flex-row items-start justify-between pt-3 pb-3 pr-6 pl-6">
                             <div>
                                 <CardTitle className="mb-2">{t.description}</CardTitle>
                                 <CardDescription>{formatDate(t.transactionDate)}</CardDescription>
@@ -135,7 +135,7 @@ export default function TransactionCard() {
                                 </Button>
                             </div>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent className="p-6 pt-0 pb-3 ">
                             <div className="flex items-center justify-between">
                                 <div className="flex flex-col gap-1">
                                     <span>Valor da transação: {formatToBRLToShow(t.amount)}</span>
