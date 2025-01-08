@@ -63,12 +63,8 @@ export default function UserIconMenu() {
         resetUserQueries();
     }
 
-    function resetUserInfo() {
-        localStorage.removeItem('userINFO');
-        resetUserQueries();
-    }
-
     function resetUserQueries() {
+        console.log('reseterr');
         queryClient.invalidateQueries({ queryKey: ['getUserData'] });
         queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByDate'] });
         queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByCategory'] });
@@ -80,7 +76,6 @@ export default function UserIconMenu() {
         if (deleted) {
             setUserActionsDialogs({ ...userActionsDialogs, closeAccount: false });
             setShowFirstTimeDialog(true);
-            resetUserInfo();
         }
     }
 
@@ -89,7 +84,6 @@ export default function UserIconMenu() {
         updateUser(userInfo);
         setUserActionsDialogs({ ...userActionsDialogs, newAccount: false });
         setShowFirstTimeDialog(true);
-        resetUserInfo();
     }
 
     return (

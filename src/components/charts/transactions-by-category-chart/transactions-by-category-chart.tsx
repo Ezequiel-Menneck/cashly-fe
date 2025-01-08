@@ -30,7 +30,7 @@ export default function TransactionsByCategoryChart() {
     const [chartData, setChartData] = useState<ChartData[]>([]);
     const [chartConfig, setChartConfig] = useState<ChartConfigType>({});
     const { isPending, data } = useQuery<GraphQLResponse<TransactionsCountByCategory>>({
-        queryKey: ['getTransactionsCountByCategory'],
+        queryKey: ['getTransactionsCountByCategory', userInfo.uid],
         queryFn: () => fetchTransactionsCountByCategory(userInfo.uid)
     });
 

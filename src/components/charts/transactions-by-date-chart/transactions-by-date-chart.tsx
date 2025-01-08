@@ -42,7 +42,7 @@ export function TransactionsByDateChart() {
     const [chartData, setChartData] = useState<ChartData[]>([]);
     const [mostRecentTransaction, setMostRecentTransaction] = useState<DateOfTransactionsAndTransactionsCount>();
     const { isPending, data } = useQuery<GraphQLResponse<TransactionsCountByDate>>({
-        queryKey: ['getTransactionsCountByDate'],
+        queryKey: ['getTransactionsCountByDate', userInfo.uid],
         queryFn: () => fetchTransactionsCountByDate(userInfo.uid)
     });
 

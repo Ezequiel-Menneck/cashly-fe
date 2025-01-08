@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useUser } from '@/context/UserContext';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Separator } from '@radix-ui/react-dropdown-menu';
+import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '../ui/button';
@@ -24,8 +25,8 @@ const formSchema = z.object({
 });
 
 export default function FirstTimeDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
-    // const userINFO = useUserInfo();
     const { userInfo, updateUser } = useUser();
+    const queryClient = useQueryClient();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -40,6 +41,10 @@ export default function FirstTimeDialog({ open, onClose }: { open: boolean; onCl
         await fetchCreateUser({ username: values.username, identifier: userInfo.uid, baseSalary: values.baseSalary });
         form.reset();
         onClose();
+        queryClient.invalidateQueries({ queryKey: ['getUserData'] });
+        queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByDate'] });
+        queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByCategory'] });
+        queryClient.invalidateQueries({ queryKey: ['getUserBaseSalaryAndSumTransactionsAmount'] });
     }
 
     return (

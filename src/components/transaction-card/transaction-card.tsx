@@ -55,7 +55,6 @@ export default function TransactionCard() {
         queryKey: ['getAllCategories'],
         queryFn: fetchGetAllCategories
     });
-    console.log(data);
     const [filteredData, setFilteredData] = useState<Transaction[] | undefined>(
         data?.data?.findUserByIdentifier?.transactions || []
     );
@@ -75,9 +74,10 @@ export default function TransactionCard() {
                 const dateMatch = !filters.date || new Date(item.transactionDate).toDateString() === filters.date.toDateString(); // Updated date comparison
                 return categoryMatch && typeMatch && dateMatch;
             });
-            console.log(filtered);
             setFilteredData(filtered);
+            return;
         }
+        setFilteredData([]);
     };
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -147,7 +147,7 @@ export default function TransactionCard() {
     return (
         <>
             <FilterComponent categories={categories} types={types} onFilterChange={handleFilterChange} />
-            {filteredData &&
+            {filteredData && filteredData.length > 0 ? (
                 filteredData.map((t) => (
                     <Card className="mb-4" key={t.id}>
                         <CardHeader className="flex flex-row items-start justify-between pt-3 pb-3 pr-6 pl-6">
@@ -178,7 +178,10 @@ export default function TransactionCard() {
                             </div>
                         </CardContent>
                     </Card>
-                ))}
+                ))
+            ) : (
+                <div className="text-center mt-4">Nenhuma transação disponível.</div> // Message for no transactions
+            )}
 
             <Dialog
                 open={transactionModals.deleteModal}
