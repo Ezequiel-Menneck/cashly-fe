@@ -12,7 +12,7 @@ import {
     ChartTooltip,
     ChartTooltipContent
 } from '@/components/ui/chart';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem } from '@/components/ui/select';
 import { GraphQLResponse } from '@/graphql/dataWrapper';
 import { DateOfTransactionsAndTransactionsCount, TransactionsCountByDate } from '@/graphql/types';
 import { useUserInfo } from '@/hooks/useUserInfo';
@@ -88,9 +88,6 @@ export function TransactionsByDateChart() {
                     <CardDescription>Exibindo a quantidade de transações do ano!</CardDescription>
                 </div>
                 <Select value={timeRange} onValueChange={setTimeRange}>
-                    <SelectTrigger className="w-[160px] rounded-lg sm:ml-auto" aria-label="Select a value">
-                        <SelectValue placeholder="Last 3 months" />
-                    </SelectTrigger>
                     <SelectContent className="rounded-xl">
                         <SelectItem value="1" className="rounded-lg">
                             Janeiro
