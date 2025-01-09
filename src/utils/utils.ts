@@ -1,3 +1,4 @@
+import { QueryClient } from '@tanstack/react-query';
 export const formatToBRL = (value: number): string => {
     return value.toLocaleString('pt-BR', {
         style: 'currency',
@@ -25,4 +26,15 @@ export function formatDate(isoString: string) {
         year: 'numeric'
     };
     return new Intl.DateTimeFormat('pt-BR', options).format(date);
+}
+
+export function resetUserQueries(queryClient: QueryClient) {
+    queryClient.invalidateQueries({ queryKey: ['getUserData'] });
+    queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByDate'] });
+    queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByCategory'] });
+    queryClient.invalidateQueries({ queryKey: ['getUserBaseSalaryAndSumTransactionsAmount'] });
+}
+
+export function resetCategoryQueries(queryClient: QueryClient) {
+    queryClient.invalidateQueries({ queryKey: ['getAllCategories'] });
 }

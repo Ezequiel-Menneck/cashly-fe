@@ -1,8 +1,10 @@
 import { formSchemaForCategories, formSchemaForTransactions, TransactionTypeSchema } from '@/@types/form';
-import { fetchCreateTransaction } from '@/api/user';
+import { fetchCreateCategory, fetchCreateTransaction } from '@/api/user';
 import { useUser } from '@/context/user-context';
+import { resetCategoryQueries, resetUserQueries } from '@/utils/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { DialogDescription, DialogTitle } from '@radix-ui/react-dialog';
+import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '../ui/button';
@@ -27,6 +29,7 @@ export function CreateTransactionAndCategoryTab({
     onClose: () => void;
 }) {
     const { userInfo } = useUser();
+    const queryClinet = useQueryClient();
     const transactionsForm = useForm<z.infer<typeof transactionFormSchema>>({
         resolver: zodResolver(transactionFormSchema),
         defaultValues: {
@@ -48,12 +51,17 @@ export function CreateTransactionAndCategoryTab({
     async function onTransactionCreateSubmit(values: z.infer<typeof transactionFormSchema>) {
         const result = await fetchCreateTransaction({ identifier: userInfo.uid, ...values });
         if (!result.errors) {
+            resetUserQueries(queryClinet);
             onClose();
         }
     }
 
-    function onCategoryCreateSubmit(values: z.infer<typeof categoryFormSchema>) {
-        console.log(values);
+    async function onCategoryCreateSubmit(values: z.infer<typeof categoryFormSchema>) {
+        const result = await fetchCreateCategory(values);
+        if (!result.errors) {
+            resetCategoryQueries(queryClinet);
+            onClose();
+        }
     }
 
     return (
@@ -162,6 +170,33 @@ export function CreateTransactionAndCategoryTab({
                                                     </SelectContent>
                                                 </Select>
                                                 <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                                <div className="flex items-end justify-end">
+                                    <Button type="submit">Confirmar</Button>
+                                </div>
+                            </form>
+                        </Form>
+                    </TabsContent>
+                    <TabsContent value="category">
+                        <Form {...categoryForm}>
+                            <form onSubmit={categoryForm.handleSubmit(onCategoryCreateSubmit)} className="space-x-3 space-y-3">
+                                <div className="flex flex-col justify-between">
+                                    <FormField
+                                        control={categoryForm.control}
+                                        name="name"
+                                        render={({ field }) => (
+                                            <FormItem className="mb-2">
+                                                <FormLabel>Nome da sua categoria</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        onChange={field.onChange}
+                                                        value={field.value}
+                                                        placeholder="Digite o nome da sua categoria"
+                                                    />
+                                                </FormControl>
                                             </FormItem>
                                         )}
                                     />

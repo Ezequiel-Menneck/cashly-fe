@@ -3,7 +3,7 @@ import { fetchDeleteUserTransaction, fetchGetAllCategories, fetchUpdateTransacti
 import { useUser } from '@/context/user-context';
 import { GraphQLResponse } from '@/graphql/dataWrapper';
 import { FindUserByIdentifierResponse, Transaction, TransactionType } from '@/graphql/types';
-import { formatDate, formatToBRLToShow } from '@/utils/utils';
+import { formatDate, formatToBRLToShow, resetUserQueries } from '@/utils/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Edit2Icon, Trash2 } from 'lucide-react';
@@ -28,13 +28,13 @@ const TransactionTypeSchema = z.enum(['CREDIT', 'DEBIT']);
 const transactionsForm = formSchemaForTransactions;
 
 export default function TransactionCard() {
+    const queryClient = useQueryClient();
     const [transactionModals, setTransactionModals] = useState<{ deleteModal: boolean; editModal: boolean }>({
         deleteModal: false,
         editModal: false
     });
     const [createTransactionOrCategoryModal, setCreateTransactionOrCategoryModal] = useState<boolean>(false);
     const [selectedTransaction, setSelectedTransaction] = useState<Transaction>();
-    const queryClient = useQueryClient();
     const { userInfo } = useUser();
     const { isPending, data } = useQuery<GraphQLResponse<FindUserByIdentifierResponse>>({
         queryKey: ['getUserData', userInfo.uid],
@@ -110,18 +110,11 @@ export default function TransactionCard() {
         setTransactionModals({ ...transactionModals, [modalType]: true });
     }
 
-    function resetUserQueries() {
-        queryClient.invalidateQueries({ queryKey: ['getUserData'] });
-        queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByDate'] });
-        queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByCategory'] });
-        queryClient.invalidateQueries({ queryKey: ['getUserBaseSalaryAndSumTransactionsAmount'] });
-    }
-
     async function handleExcludeTransaction() {
         if (selectedTransaction) {
             await fetchDeleteUserTransaction(userInfo.uid, selectedTransaction.id);
             setTransactionModals({ ...transactionModals, deleteModal: false });
-            resetUserQueries();
+            resetUserQueries(queryClient);
         }
     }
 
@@ -129,7 +122,7 @@ export default function TransactionCard() {
         if (selectedTransaction) {
             await fetchUpdateTransaction({ identifier: userInfo.uid, transactionId: selectedTransaction.id, ...values });
             setTransactionModals({ ...transactionModals, editModal: false });
-            resetUserQueries();
+            resetUserQueries(queryClient);
         }
     }
 

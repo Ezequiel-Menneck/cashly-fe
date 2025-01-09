@@ -1,5 +1,6 @@
 import { fetchDeleteUserAccount, fetchUserData } from '@/api/user';
 import { generateUserUID, UserUidAndUsername, useUser } from '@/context/user-context';
+import { resetUserQueries } from '@/utils/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import { Copy } from 'lucide-react';
@@ -60,15 +61,7 @@ export default function UserIconMenu() {
             username: userData.data?.findUserByIdentifier.username ? userData.data.findUserByIdentifier.username : ''
         });
         setUserActionsDialogs({ ...userActionsDialogs, recoveryAccount: false });
-        resetUserQueries();
-    }
-
-    function resetUserQueries() {
-        console.log('reseterr');
-        queryClient.invalidateQueries({ queryKey: ['getUserData'] });
-        queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByDate'] });
-        queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByCategory'] });
-        queryClient.invalidateQueries({ queryKey: ['getUserBaseSalaryAndSumTransactionsAmount'] });
+        resetUserQueries(queryClient);
     }
 
     async function handleDeleteAccount(): Promise<void> {

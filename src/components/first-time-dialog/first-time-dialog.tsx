@@ -1,6 +1,7 @@
 import { fetchCreateUser } from '@/api/user';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useUser } from '@/context/user-context';
+import { resetUserQueries } from '@/utils/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Separator } from '@radix-ui/react-dropdown-menu';
 import { useQueryClient } from '@tanstack/react-query';
@@ -26,7 +27,7 @@ const formSchema = z.object({
 
 export default function FirstTimeDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
     const { userInfo, updateUser } = useUser();
-    const queryClient = useQueryClient();
+    const queryClinet = useQueryClient();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -41,10 +42,7 @@ export default function FirstTimeDialog({ open, onClose }: { open: boolean; onCl
         await fetchCreateUser({ username: values.username, identifier: userInfo.uid, baseSalary: values.baseSalary });
         form.reset();
         onClose();
-        queryClient.invalidateQueries({ queryKey: ['getUserData'] });
-        queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByDate'] });
-        queryClient.invalidateQueries({ queryKey: ['getTransactionsCountByCategory'] });
-        queryClient.invalidateQueries({ queryKey: ['getUserBaseSalaryAndSumTransactionsAmount'] });
+        resetUserQueries(queryClinet);
     }
 
     return (

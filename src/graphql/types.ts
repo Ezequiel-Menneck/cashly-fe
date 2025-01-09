@@ -82,3 +82,7 @@ type CategoryNameAndId = {
 export type CategoryNameAndIdList = {
     findAll: CategoryNameAndId[];
 };
+
+export type CreateCategoryDTO = {
+    name: string;
+};
