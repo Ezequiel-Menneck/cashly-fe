@@ -54,6 +54,15 @@ export type UpdateTransactionDTO = {
     categoryName: string | null;
 };
 
+export type CreateTransactionDTO = {
+    identifier: string;
+    amount: number;
+    transactionDate: Date;
+    description: string;
+    type: TransactionType;
+    categoryName: string | null;
+};
+
 export type TransactionType = 'CREDIT' | 'DEBIT';
 
 type UserBaseSalaryAndSumTransactionsAmount = {

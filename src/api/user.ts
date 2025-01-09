@@ -1,4 +1,5 @@
 import { GraphQLResponse } from '@/graphql/dataWrapper';
+import { createTransactionMutation } from '@/graphql/mutations/createTransaction';
 import { createUserMutation } from '@/graphql/mutations/createUser';
 import { deleteUserByIdentifierMutation } from '@/graphql/mutations/deleteUserByIdentifier';
 import { deleteTransactionMutation } from '@/graphql/mutations/deleteUserTransaction';
@@ -10,6 +11,7 @@ import { getTransactionsCountByCategoryQuery } from '@/graphql/queries/getTransa
 import { getUserBaseSalaryAndSumTransactionsAmountQuery } from '@/graphql/queries/getUserBaseSalaryAndSumTransactionsAmount';
 import {
     CategoryNameAndIdList,
+    CreateTransactionDTO,
     CreateUserRequestDTO,
     FindUserByIdentifierResponse,
     TransactionsCountByCategory,
@@ -125,6 +127,22 @@ export async function fetchUpdateTransaction(updateTransactionDTO: UpdateTransac
                 description: updateTransactionDTO.description,
                 type: updateTransactionDTO.type,
                 categoryName: updateTransactionDTO.identifier
+            }
+        }
+    });
+}
+
+export async function fetchCreateTransaction(createTransactionDTO: CreateTransactionDTO): Promise<GraphQLResponse<Boolean>> {
+    return await axiosInstance<Promise<GraphQLResponse<Boolean>>>({
+        data: {
+            query: createTransactionMutation,
+            variables: {
+                identifier: createTransactionDTO.identifier,
+                amount: createTransactionDTO.amount,
+                transactionDate: createTransactionDTO.transactionDate,
+                description: createTransactionDTO.description,
+                type: createTransactionDTO.type,
+                categoryName: createTransactionDTO.identifier
             }
         }
     });

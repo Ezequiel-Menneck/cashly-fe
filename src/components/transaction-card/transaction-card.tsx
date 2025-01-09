@@ -1,3 +1,4 @@
+import { formSchemaForTransactions } from '@/@types/form';
 import { fetchDeleteUserTransaction, fetchGetAllCategories, fetchUpdateTransaction, fetchUserData } from '@/api/user';
 import { useUser } from '@/context/user-context';
 import { GraphQLResponse } from '@/graphql/dataWrapper';
@@ -9,6 +10,7 @@ import { Edit2Icon, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { CreateTransactionAndCategoryTab } from '../create-transaction-and-category-tabs/create-transaction-and-category-tabs';
 import { FilterComponent } from '../filter-component/filter-component';
 import LoadingFetchData from '../loading-fetch-data/loading-fetch-data';
 import { Badge } from '../ui/badge';
@@ -23,27 +25,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 
 const TransactionTypeSchema = z.enum(['CREDIT', 'DEBIT']);
 
-const formSchema = z.object({
-    amount: z
-        .number({
-            required_error: 'O valor da transação é obrigatório',
-            invalid_type_error: 'O valor da transação deve ser um número'
-        })
-        .positive({ message: 'O valor da transação deve ser maior que 0' }),
-    transactionDate: z.date(),
-    description: z
-        .string()
-        .min(3, { message: 'A descriçao deve ao menos conter 3 caracteres' })
-        .max(150, { message: 'A descrição deve ter no máximo 100 caracteres' }),
-    type: TransactionTypeSchema,
-    categoryName: z.string().nullable()
-});
+const transactionsForm = formSchemaForTransactions;
 
 export default function TransactionCard() {
     const [transactionModals, setTransactionModals] = useState<{ deleteModal: boolean; editModal: boolean }>({
         deleteModal: false,
         editModal: false
     });
+    const [createTransactionOrCategoryModal, setCreateTransactionOrCategoryModal] = useState<boolean>(false);
     const [selectedTransaction, setSelectedTransaction] = useState<Transaction>();
     const queryClient = useQueryClient();
     const { userInfo } = useUser();
@@ -80,8 +69,12 @@ export default function TransactionCard() {
         setFilteredData([]);
     };
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    function handleCreateTransactionOrCategoryModal() {
+        setCreateTransactionOrCategoryModal(!createTransactionOrCategoryModal);
+    }
+
+    const form = useForm<z.infer<typeof transactionsForm>>({
+        resolver: zodResolver(transactionsForm),
         defaultValues: {
             amount: 0,
             description: '',
@@ -132,7 +125,7 @@ export default function TransactionCard() {
         }
     }
 
-    async function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof transactionsForm>) {
         if (selectedTransaction) {
             await fetchUpdateTransaction({ identifier: userInfo.uid, transactionId: selectedTransaction.id, ...values });
             setTransactionModals({ ...transactionModals, editModal: false });
@@ -148,7 +141,9 @@ export default function TransactionCard() {
         <>
             <div className="flex items-center space-y-6 justify-between">
                 <FilterComponent categories={categories} types={types} onFilterChange={handleFilterChange} />
-                <Button className="bg-green-600 hover:bg-green-800">Adicionar</Button>
+                <Button className="bg-green-600 hover:bg-green-800" onClick={handleCreateTransactionOrCategoryModal}>
+                    Adicionar
+                </Button>
             </div>
             {filteredData && filteredData.length > 0 ? (
                 filteredData.map((t) => (
@@ -289,11 +284,10 @@ export default function TransactionCard() {
                                                     <SelectValue placeholder="Selecione o tipo da transação" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {categoriesData?.data?.findAll &&
-                                                        categoriesData.data.findAll.length > 0 &&
-                                                        categoriesData.data.findAll.map((category) => (
-                                                            <SelectItem value={category.name} key={category.name}>
-                                                                {category.name}
+                                                    {categories.length > 0 &&
+                                                        categories.map((category) => (
+                                                            <SelectItem value={category} key={category}>
+                                                                {category}
                                                             </SelectItem>
                                                         ))}
                                                 </SelectContent>
@@ -310,6 +304,12 @@ export default function TransactionCard() {
                     </Form>
                 </DialogContent>
             </Dialog>
+
+            <CreateTransactionAndCategoryTab
+                categories={categories}
+                open={createTransactionOrCategoryModal}
+                onClose={handleCreateTransactionOrCategoryModal}
+            />
         </>
     );
 }
