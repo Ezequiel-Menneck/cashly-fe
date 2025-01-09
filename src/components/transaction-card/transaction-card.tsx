@@ -146,7 +146,10 @@ export default function TransactionCard() {
 
     return (
         <>
-            <FilterComponent categories={categories} types={types} onFilterChange={handleFilterChange} />
+            <div className="flex items-center space-y-6 justify-between">
+                <FilterComponent categories={categories} types={types} onFilterChange={handleFilterChange} />
+                <Button className="bg-green-600 hover:bg-green-800">Adicionar</Button>
+            </div>
             {filteredData && filteredData.length > 0 ? (
                 filteredData.map((t) => (
                     <Card className="mb-4" key={t.id}>
@@ -180,7 +183,7 @@ export default function TransactionCard() {
                     </Card>
                 ))
             ) : (
-                <div className="text-center mt-4">Nenhuma transação disponível.</div> // Message for no transactions
+                <div className="text-center mt-4">Nenhuma transação disponível.</div>
             )}
 
             <Dialog

@@ -37,7 +37,7 @@ export function FilterComponent({ categories, types, onFilterChange }: FilterCom
     };
 
     return (
-        <div className="flex space-x-4 m-3">
+        <div className="flex space-x-4 m-3 mr-0 ml-0 w-4/5">
             <div className="flex-1">
                 <Label htmlFor="category">Categoria</Label>
                 <Select onValueChange={(value) => handleFilterChange('category', value)}>
@@ -86,7 +86,7 @@ export function FilterComponent({ categories, types, onFilterChange }: FilterCom
                         <SelectItem value="all">Qualquer Tipo</SelectItem>
                         {types.map((type) => (
                             <SelectItem key={type} value={type}>
-                                {type}
+                                {type == 'CREDIT' ? 'Crédito' : 'Débito'}
                             </SelectItem>
                         ))}
                     </SelectContent>
