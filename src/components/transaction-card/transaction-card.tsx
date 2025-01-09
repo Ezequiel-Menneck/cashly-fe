@@ -1,5 +1,5 @@
 import { fetchDeleteUserTransaction, fetchGetAllCategories, fetchUpdateTransaction, fetchUserData } from '@/api/user';
-import { useUser } from '@/context/UserContext';
+import { useUser } from '@/context/user-context';
 import { GraphQLResponse } from '@/graphql/dataWrapper';
 import { FindUserByIdentifierResponse, Transaction, TransactionType } from '@/graphql/types';
 import { formatDate, formatToBRLToShow } from '@/utils/utils';

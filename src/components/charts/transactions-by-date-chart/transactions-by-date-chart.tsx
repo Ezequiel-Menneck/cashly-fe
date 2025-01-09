@@ -13,7 +13,7 @@ import {
     ChartTooltipContent
 } from '@/components/ui/chart';
 import { Select, SelectContent, SelectItem } from '@/components/ui/select';
-import { useUser } from '@/context/UserContext';
+import { useUser } from '@/context/user-context';
 import { GraphQLResponse } from '@/graphql/dataWrapper';
 import { DateOfTransactionsAndTransactionsCount, TransactionsCountByDate } from '@/graphql/types';
 import { useQuery } from '@tanstack/react-query';

@@ -1,5 +1,5 @@
 import Header from '@/components/header/header';
-import { UserProvider } from '@/context/UserContext';
+import { UserProvider } from '@/context/user-context';
 import { Outlet } from 'react-router';
 
 export default function Layout() {

@@ -1,6 +1,6 @@
 import { fetchCreateUser } from '@/api/user';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { useUser } from '@/context/UserContext';
+import { useUser } from '@/context/user-context';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Separator } from '@radix-ui/react-dropdown-menu';
 import { useQueryClient } from '@tanstack/react-query';

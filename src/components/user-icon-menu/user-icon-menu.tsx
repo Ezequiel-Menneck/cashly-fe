@@ -1,5 +1,5 @@
 import { fetchDeleteUserAccount, fetchUserData } from '@/api/user';
-import { generateUserUID, UserUidAndUsername, useUser } from '@/context/UserContext';
+import { generateUserUID, UserUidAndUsername, useUser } from '@/context/user-context';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import { Copy } from 'lucide-react';

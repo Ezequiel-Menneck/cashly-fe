@@ -6,7 +6,7 @@ import { PolarAngleAxis, RadialBar, RadialBarChart } from 'recharts';
 import { fetchUserBaseSalaryAndSumOfTransactionsAmount } from '@/api/user';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { useUser } from '@/context/UserContext';
+import { useUser } from '@/context/user-context';
 import { GraphQLResponse } from '@/graphql/dataWrapper';
 import { UserBaseSalaryAndTransactionsSum } from '@/graphql/types';
 import { useQuery } from '@tanstack/react-query';

@@ -3,7 +3,7 @@ import { Bar, BarChart, XAxis, YAxis } from 'recharts';
 import { fetchTransactionsCountByCategory } from '@/api/user';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { useUser } from '@/context/UserContext';
+import { useUser } from '@/context/user-context';
 import { GraphQLResponse } from '@/graphql/dataWrapper';
 import { TransactionsCountByCategory } from '@/graphql/types';
 import { useQuery } from '@tanstack/react-query';
