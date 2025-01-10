@@ -22,6 +22,7 @@ import {
     UserBaseSalaryAndTransactionsSum
 } from '@/graphql/types';
 import { axiosInstance } from '@/services/axios-instance';
+import { updateCategoryMutation } from './../graphql/mutations/updateCategory';
 
 export async function fetchUserData(userUid: string): Promise<GraphQLResponse<FindUserByIdentifierResponse>> {
     return await axiosInstance<GraphQLResponse<FindUserByIdentifierResponse>>({
@@ -156,6 +157,24 @@ export async function fetchCreateCategory(createCategoryDTO: CreateCategoryDTO):
             query: createCategoryMutation,
             variables: {
                 name: createCategoryDTO.name
+            }
+        }
+    });
+}
+
+export async function fetchUpdateCategory({
+    oldName,
+    newName
+}: {
+    oldName: string;
+    newName: string;
+}): Promise<GraphQLResponse<Boolean>> {
+    return await axiosInstance<Promise<GraphQLResponse<Boolean>>>({
+        data: {
+            query: updateCategoryMutation,
+            variables: {
+                oldName,
+                newName
             }
         }
     });

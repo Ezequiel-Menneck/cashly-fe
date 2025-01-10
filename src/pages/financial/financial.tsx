@@ -30,6 +30,8 @@ export default function Financial() {
 
             <TransactionCard />
             <FirstTimeDialog open={showFirstTimeDialog} onClose={handleCloseForm} />
+
+            <div className="bg-red-500 hover:bg-blue-500 transition-colors duration-300 w-32 h-32"></div>
         </>
     );
 }

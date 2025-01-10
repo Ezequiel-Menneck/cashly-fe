@@ -54,7 +54,6 @@ export default function TransactionCard() {
     const types: TransactionType[] = ['CREDIT', 'DEBIT'];
 
     const handleFilterChange = (filters: { category: string; date: Date | undefined; type: string }) => {
-        console.log(data);
         if (data?.data?.findUserByIdentifier != null && data.data.findUserByIdentifier.transactions.length > 0) {
             const transactions = data.data.findUserByIdentifier.transactions;
             const filtered = transactions.filter((item) => {
@@ -100,8 +99,6 @@ export default function TransactionCard() {
     }, [selectedTransaction, form]);
 
     useEffect(() => {
-        console.log('aaaaaa34923049230-4923-0490-2fdslkfjsdlkfjls');
-        console.log(userInfo);
         handleFilterChange({ category: '', date: undefined, type: '' });
     }, [data]);
 
@@ -134,8 +131,11 @@ export default function TransactionCard() {
         <>
             <div className="flex items-center space-y-6 justify-between">
                 <FilterComponent categories={categories} types={types} onFilterChange={handleFilterChange} />
-                <Button className="bg-green-600 hover:bg-green-800" onClick={handleCreateTransactionOrCategoryModal}>
-                    Adicionar
+                <Button
+                    className="bg-gradient-to-r from-[#16A34A] to-[#FFD60A] hover:bg-gradient-to-r hover:from-[#0F7A37] hover:to-[#CCAA08]"
+                    onClick={handleCreateTransactionOrCategoryModal}
+                >
+                    Adicionar / Editar
                 </Button>
             </div>
             {filteredData && filteredData.length > 0 ? (

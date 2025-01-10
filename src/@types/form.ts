@@ -24,3 +24,8 @@ export const formSchemaForCategories = z.object({
         .min(3, { message: 'O nome da categoria deve ao menos conter 3 caracteres' })
         .max(50, { message: 'O nome da categoria deve no maximo conter 50 caracteres' })
 });
+
+export const formSchemaForUpdateCategory = z.object({
+    oldName: z.string(),
+    newName: z.string().min(3).max(30)
+});
