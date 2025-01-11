@@ -68,6 +68,7 @@ export function CreateTransactionAndCategoryTab({
         if (!result.errors) {
             resetUserQueries(queryClinet);
             onClose();
+            transactionsForm.reset();
         }
     }
 

@@ -145,7 +145,7 @@ export async function fetchCreateTransaction(createTransactionDTO: CreateTransac
                 transactionDate: createTransactionDTO.transactionDate,
                 description: createTransactionDTO.description,
                 type: createTransactionDTO.type,
-                categoryName: createTransactionDTO.identifier
+                categoryName: createTransactionDTO.categoryName
             }
         }
     });

@@ -93,7 +93,7 @@ export default function TransactionCard() {
                     selectedTransaction.type === 'CREDIT' || selectedTransaction.type === 'DEBIT'
                         ? selectedTransaction.type
                         : 'CREDIT',
-                categoryName: selectedTransaction.categoryId || null
+                categoryName: selectedTransaction.categoryId
             });
         }
     }, [selectedTransaction, form]);

@@ -15,7 +15,7 @@ export const formSchemaForTransactions = z.object({
         .min(3, { message: 'A descriçao deve ao menos conter 3 caracteres' })
         .max(150, { message: 'A descrição deve ter no máximo 100 caracteres' }),
     type: TransactionTypeSchema,
-    categoryName: z.string().nullable()
+    categoryName: z.string().nonempty({ message: 'Por favor selecione uma categoria' })
 });
 
 export const formSchemaForCategories = z.object({
