@@ -9,7 +9,7 @@ export default function AppLink({ to, label, icon }: { to: string; label: string
     return (
         <Link className={`${buttonVariants({ variant: 'ghost' })} ${isActive ? 'bg-accent text-accent-foreground' : ''}`} to={to}>
             {icon && icon}
-            {label}
+            {label && <span className="hidden sm:block">{label}</span>}
         </Link>
     );
 }

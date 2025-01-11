@@ -82,7 +82,7 @@ export function TransactionsByDateChart() {
     }
 
     return (
-        <Card className="w-[40%] h-full">
+        <Card className="w-full lg:w-[40%] min-h-[300px]">
             <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
                 <div className="grid flex-1 gap-1 text-center sm:text-left">
                     <CardTitle>Quantidade de transações por mês</CardTitle>

@@ -129,7 +129,7 @@ export default function TransactionCard() {
 
     return (
         <>
-            <div className="flex items-center space-y-6 justify-between">
+            <div className="flex flex-wrap items-center space-y-6 justify-between mb-2">
                 <FilterComponent categories={categories} types={types} onFilterChange={handleFilterChange} />
                 <Button
                     className="bg-gradient-to-r from-[#16A34A] to-[#FFD60A] hover:bg-gradient-to-r hover:from-[#0F7A37] hover:to-[#CCAA08]"

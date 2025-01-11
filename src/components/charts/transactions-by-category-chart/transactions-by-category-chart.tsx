@@ -74,13 +74,13 @@ export default function TransactionsByCategoryChart() {
     }
 
     return (
-        <Card className="w-full sm:w-[30%]">
+        <Card className="w-full lg:w-[30%]">
             <CardHeader className="pb-2">
                 <CardTitle>Compras por categoria</CardTitle>
                 <CardDescription>{getMonthName()}</CardDescription>
             </CardHeader>
-            <CardContent className="h-[200px]">
-                <ChartContainer config={chartConfig} className="h-[200px]">
+            <CardContent>
+                <ChartContainer config={chartConfig}>
                     <BarChart
                         accessibilityLayer
                         data={chartData}
@@ -104,11 +104,10 @@ export default function TransactionsByCategoryChart() {
                             }}
                             width={80}
                             tick={{ textAnchor: 'start', dx: -50 }}
-                            // height={}
                         />
                         <XAxis dataKey="transactionCount" type="number" hide />
                         <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                        <Bar dataKey="transactionCount" layout="vertical" radius={5} />
+                        <Bar dataKey="transactionCount" layout="vertical" radius={5} className="w-10" />
                     </BarChart>
                 </ChartContainer>
             </CardContent>

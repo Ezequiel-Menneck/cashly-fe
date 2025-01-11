@@ -49,12 +49,12 @@ export function BaseSalaryChart() {
     const daysLeft = 30 - new Date().getDate();
 
     return (
-        <Card className="w-[30%] max-w-2xl">
+        <Card className="w-full lg:w-[30%]">
             <CardHeader>
                 <CardTitle>Visão geral das finanças mensais</CardTitle>
                 <CardDescription>Acompanhando seus gastos até o final do mês</CardDescription>
             </CardHeader>
-            <CardContent className="flex items-center justify-between">
+            <CardContent className="flex items-center justify-between flex-wrap sm:flex-nowrap">
                 <div className="space-y-2">
                     <p className="text-2xl font-bold">${amount.toLocaleString()}</p>
                     <p className="text-sm text-muted-foreground">Saldo Atual </p>

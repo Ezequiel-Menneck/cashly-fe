@@ -8,7 +8,7 @@ export default function Layout() {
             <div className="w-screen h-screen overflow-x-hidden flex justify-center items-center">
                 <div className="w-4/5 max-w-screen-xl h-full flex flex-col">
                     <Header />
-                    <main className="flex-grow w-full">
+                    <main className="flex-grow w-full h-full">
                         <Outlet />
                     </main>
                 </div>

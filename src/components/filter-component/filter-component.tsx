@@ -37,7 +37,7 @@ export function FilterComponent({ categories, types, onFilterChange }: FilterCom
     };
 
     return (
-        <div className="flex space-x-4 m-3 mr-0 ml-0 w-4/5">
+        <div className="flex flex-wrap space-x-1 w-4/5">
             <div className="flex-1">
                 <Label htmlFor="category">Categoria</Label>
                 <Select onValueChange={(value) => handleFilterChange('category', value)}>

@@ -94,10 +94,16 @@ export function CreateTransactionAndCategoryTab({
                 <DialogTitle className="hidden" />
                 <DialogDescription className="hidden" />
                 <Tabs defaultValue="transaction" className="w-full h-full p-3">
-                    <TabsList className="grid w-full grid-cols-3">
-                        <TabsTrigger value="transaction">Transação</TabsTrigger>
-                        <TabsTrigger value="category">Categoria</TabsTrigger>
-                        <TabsTrigger value="edit-category">Editar categoria</TabsTrigger>
+                    <TabsList className="grid w-full grid-cols-3 gap-2">
+                        <TabsTrigger value="transaction" className="truncate">
+                            Transação
+                        </TabsTrigger>
+                        <TabsTrigger value="category" className="truncate">
+                            Categoria
+                        </TabsTrigger>
+                        <TabsTrigger value="edit-category" className="truncate">
+                            Editar categoria
+                        </TabsTrigger>
                     </TabsList>
                     <TabsContent value="transaction">
                         <Form {...transactionsForm}>

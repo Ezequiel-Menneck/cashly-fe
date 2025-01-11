@@ -22,16 +22,16 @@ export default function Financial() {
 
     return (
         <>
-            <div className="flex gap-4 h-[300px]">
+            <div className="flex flex-col mb-2 sm:flex-col md:flex-col lg:flex-row gap-4">
                 <BaseSalaryChart />
                 <TransactionsByCategoryChart />
                 <TransactionsByDateChart />
             </div>
+            <div>
+                <TransactionCard />
+            </div>
 
-            <TransactionCard />
             <FirstTimeDialog open={showFirstTimeDialog} onClose={handleCloseForm} />
-
-            <div className="bg-red-500 hover:bg-blue-500 transition-colors duration-300 w-32 h-32"></div>
         </>
     );
 }
