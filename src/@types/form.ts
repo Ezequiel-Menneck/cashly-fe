@@ -29,3 +29,19 @@ export const formSchemaForUpdateCategory = z.object({
     oldName: z.string(),
     newName: z.string().min(3).max(30)
 });
+
+export const formSchemaForRecoveryAccount = z.object({
+    uid: z
+        .string()
+        .min(6, { message: 'O UID de usuário deve ter no mínimo 6 caracteres' })
+        .max(6, { message: 'O UID de usuário deve ter no maximo 6 caracteres' })
+});
+
+export const formSchemaBaseSalary = z.object({
+    baseSalary: z
+        .number({
+            required_error: 'O salário base é obrigatório',
+            invalid_type_error: 'O salário base deve ser um número'
+        })
+        .positive({ message: 'O salário base deve ser maior que zero' })
+});

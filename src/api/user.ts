@@ -4,6 +4,7 @@ import { createTransactionMutation } from '@/graphql/mutations/createTransaction
 import { createUserMutation } from '@/graphql/mutations/createUser';
 import { deleteUserByIdentifierMutation } from '@/graphql/mutations/deleteUserByIdentifier';
 import { deleteTransactionMutation } from '@/graphql/mutations/deleteUserTransaction';
+import { updateBaseSalaryMutation } from '@/graphql/mutations/updateBaseSalary';
 import { updateTransactionMutation } from '@/graphql/mutations/updateTransaction';
 import { findAllCategoryQuery } from '@/graphql/queries/findAllCategory';
 import { findUserByIdentifierQuery } from '@/graphql/queries/findUserByIdentifier';
@@ -175,6 +176,24 @@ export async function fetchUpdateCategory({
             variables: {
                 oldName,
                 newName
+            }
+        }
+    });
+}
+
+export async function fetchUpdateBaseSalary({
+    identifier,
+    baseSalary
+}: {
+    identifier: string;
+    baseSalary: number;
+}): Promise<GraphQLResponse<boolean>> {
+    return await axiosInstance<Promise<GraphQLResponse<boolean>>>({
+        data: {
+            query: updateBaseSalaryMutation,
+            variables: {
+                identifier,
+                baseSalary
             }
         }
     });

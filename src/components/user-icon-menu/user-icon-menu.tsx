@@ -1,4 +1,5 @@
-import { fetchDeleteUserAccount, fetchUserData } from '@/api/user';
+import { formSchemaBaseSalary, formSchemaForRecoveryAccount } from '@/@types/form';
+import { fetchDeleteUserAccount, fetchUpdateBaseSalary, fetchUserData } from '@/api/user';
 import { generateUserUID, UserUidAndUsername, useUser } from '@/context/user-context';
 import { resetUserQueries } from '@/utils/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,23 +11,21 @@ import { z } from 'zod';
 import FirstTimeDialog from '../first-time-dialog/first-time-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '../ui/button';
+import { CurrencyInput } from '../ui/currency-input';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '../ui/form';
 import { Input } from '../ui/input';
 
-const formSchema = z.object({
-    uid: z
-        .string()
-        .min(6, { message: 'O UID de usuário deve ter no mínimo 6 caracteres' })
-        .max(6, { message: 'O UID de usuário deve ter no maximo 6 caracteres' })
-});
+const recoveryAccountFormSchema = formSchemaForRecoveryAccount;
+const updateBaseSalaryFormSchema = formSchemaBaseSalary;
 
 export default function UserIconMenu() {
     const { userInfo, updateUser } = useUser();
     const queryClient = useQueryClient();
     const [userActionsDialogs, setUserActionsDialogs] = useState({
         uidDialog: false,
+        changeBaseSalary: false,
         recoveryAccount: false,
         newAccount: false,
         closeAccount: false,
@@ -42,14 +41,21 @@ export default function UserIconMenu() {
         navigator.clipboard.writeText(userInfo.uid);
     };
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const formRecoveryAccount = useForm<z.infer<typeof recoveryAccountFormSchema>>({
+        resolver: zodResolver(recoveryAccountFormSchema),
         defaultValues: {
             uid: ''
         }
     });
 
-    async function onSubmitRecoveryUserAccount(value: z.infer<typeof formSchema>) {
+    const formUpdateBaseSalary = useForm<z.infer<typeof updateBaseSalaryFormSchema>>({
+        resolver: zodResolver(updateBaseSalaryFormSchema),
+        defaultValues: {
+            baseSalary: undefined
+        }
+    });
+
+    async function onSubmitRecoveryUserAccount(value: z.infer<typeof recoveryAccountFormSchema>) {
         const userData = await fetchUserData(value.uid);
         if (userData.errors) {
             setUserActionsDialogs({ ...userActionsDialogs, errorDialog: true });
@@ -79,6 +85,15 @@ export default function UserIconMenu() {
         setShowFirstTimeDialog(true);
     }
 
+    async function handleUpdateBaseSalary(value: z.infer<typeof updateBaseSalaryFormSchema>): Promise<void> {
+        const result = await fetchUpdateBaseSalary({ identifier: userInfo.uid, baseSalary: value.baseSalary });
+        console.log(result);
+        if (!result.errors) {
+            setUserActionsDialogs({ ...userActionsDialogs, changeBaseSalary: false });
+            resetUserQueries(queryClient);
+        }
+    }
+
     return (
         <>
             <DropdownMenu>
@@ -91,6 +106,9 @@ export default function UserIconMenu() {
                 <DropdownMenuContent>
                     <DropdownMenuItem onSelect={() => setUserActionsDialogs({ ...userActionsDialogs, uidDialog: true })}>
                         Meu UID
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setUserActionsDialogs({ ...userActionsDialogs, changeBaseSalary: true })}>
+                        Alterar Salário Base
                     </DropdownMenuItem>
                     <DropdownMenuItem onSelect={() => setUserActionsDialogs({ ...userActionsDialogs, recoveryAccount: true })}>
                         Recuperar conta
@@ -123,14 +141,46 @@ export default function UserIconMenu() {
                 </DialogContent>
             </Dialog>
 
+            {/* Show change base salary modal */}
+            <Dialog
+                open={userActionsDialogs.changeBaseSalary}
+                onOpenChange={(open) => setUserActionsDialogs({ ...userActionsDialogs, changeBaseSalary: open })}
+            >
+                <DialogContent className="w-64">
+                    <DialogHeader>
+                        <DialogTitle>Altere seu Salário Base</DialogTitle>
+                        <DialogDescription></DialogDescription>
+                    </DialogHeader>
+                    <Form {...formUpdateBaseSalary}>
+                        <form onSubmit={formUpdateBaseSalary.handleSubmit(handleUpdateBaseSalary)} className="space-y-8">
+                            <FormField
+                                control={formUpdateBaseSalary.control}
+                                name="baseSalary"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Qual seu novo Salário Base?</FormLabel>
+                                        <FormControl>
+                                            <CurrencyInput onChange={field.onChange} placeholder="R$ 0.00" value={field.value} />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                            <div className="flex items-end justify-end">
+                                <Button type="submit">Confirmar</Button>
+                            </div>
+                        </form>
+                    </Form>
+                </DialogContent>
+            </Dialog>
+
             {/* Recovery Account Modal */}
             <Dialog
                 open={userActionsDialogs.recoveryAccount}
                 onOpenChange={(open) => setUserActionsDialogs({ ...userActionsDialogs, recoveryAccount: open })}
             >
                 <DialogContent className="w-64">
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmitRecoveryUserAccount)} className="space-y-8">
+                    <Form {...formRecoveryAccount}>
+                        <form onSubmit={formRecoveryAccount.handleSubmit(onSubmitRecoveryUserAccount)} className="space-y-8">
                             <div>
                                 <DialogHeader>
                                     <DialogTitle>UID</DialogTitle>
@@ -140,7 +190,7 @@ export default function UserIconMenu() {
                                             dispositivo
                                         </DialogDescription>
                                         <FormField
-                                            control={form.control}
+                                            control={formRecoveryAccount.control}
                                             name="uid"
                                             render={({ field }) => (
                                                 <FormItem>
