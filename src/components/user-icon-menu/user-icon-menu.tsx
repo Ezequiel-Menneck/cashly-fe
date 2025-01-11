@@ -1,6 +1,6 @@
 import { formSchemaBaseSalary, formSchemaForRecoveryAccount } from '@/@types/form';
 import { fetchDeleteUserAccount, fetchUpdateBaseSalary, fetchUserData } from '@/api/user';
-import { generateUserUID, UserUidAndUsername, useUser } from '@/context/user-context';
+import { generateUserUID, UserUid, useUser } from '@/context/user-context';
 import { resetUserQueries } from '@/utils/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
@@ -62,10 +62,7 @@ export default function UserIconMenu() {
             return;
         }
 
-        updateUser({
-            uid: value.uid,
-            username: userData.data?.findUserByIdentifier.username ? userData.data.findUserByIdentifier.username : ''
-        });
+        updateUser({ uid: value.uid });
         setUserActionsDialogs({ ...userActionsDialogs, recoveryAccount: false });
         resetUserQueries(queryClient);
     }
@@ -79,7 +76,7 @@ export default function UserIconMenu() {
     }
 
     function handleCreateNewAccount(): void {
-        const userInfo: UserUidAndUsername = { uid: generateUserUID(), username: '' };
+        const userInfo: UserUid = { uid: generateUserUID() };
         updateUser(userInfo);
         setUserActionsDialogs({ ...userActionsDialogs, newAccount: false });
         setShowFirstTimeDialog(true);

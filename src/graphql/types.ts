@@ -39,7 +39,6 @@ export type TransactionsCountByDate = {
 };
 
 export type CreateUserRequestDTO = {
-    username: string;
     identifier: string;
     baseSalary: number;
 };

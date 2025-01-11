@@ -1,3 +1,4 @@
+import { formSchemaBaseSalary } from '@/@types/form';
 import { fetchCreateUser } from '@/api/user';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useUser } from '@/context/user-context';
@@ -10,20 +11,8 @@ import { z } from 'zod';
 import { Button } from '../ui/button';
 import { CurrencyInput } from '../ui/currency-input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
-import { Input } from '../ui/input';
 
-const formSchema = z.object({
-    username: z
-        .string()
-        .min(3, { message: 'O nome de usuário deve ter pelo menos 3 caracteres' })
-        .max(30, { message: 'O nome de usuário deve ter no máximo 30 caracteres' }),
-    baseSalary: z
-        .number({
-            required_error: 'O salário base é obrigatório',
-            invalid_type_error: 'O salário base deve ser um número'
-        })
-        .positive({ message: 'O salário base deve ser maior que zero' })
-});
+const formSchema = formSchemaBaseSalary;
 
 export default function FirstTimeDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
     const { userInfo, updateUser } = useUser();
@@ -32,14 +21,13 @@ export default function FirstTimeDialog({ open, onClose }: { open: boolean; onCl
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            username: '',
             baseSalary: undefined
         }
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        updateUser({ uid: userInfo.uid, username: values.username });
-        await fetchCreateUser({ username: values.username, identifier: userInfo.uid, baseSalary: values.baseSalary });
+        updateUser({ uid: userInfo.uid });
+        await fetchCreateUser({ identifier: userInfo.uid, baseSalary: values.baseSalary });
         form.reset();
         onClose();
         resetUserQueries(queryClinet);
@@ -63,22 +51,8 @@ export default function FirstTimeDialog({ open, onClose }: { open: boolean; onCl
                                         local securo pois ele é a sua chave para acessar suas informações de qualquer dispositivo
                                     </DialogDescription>
                                     <DialogDescription className="mt-2 mb-2">
-                                        Digite o seu nome de usuário desejado e seu salário base para começar a usar o{' '}
-                                        <strong>Cashly</strong>!
+                                        Digite o seu salário base para começar a usar o <strong>Cashly</strong>!
                                     </DialogDescription>
-                                    <FormField
-                                        control={form.control}
-                                        name="username"
-                                        render={({ field }) => (
-                                            <FormItem className="mb-2">
-                                                <FormLabel>Nome de usuário:</FormLabel>
-                                                <FormControl>
-                                                    <Input placeholder="Seu nome de usuário" {...field} />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
                                     <FormField
                                         control={form.control}
                                         name="baseSalary"

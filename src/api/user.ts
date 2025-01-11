@@ -65,7 +65,6 @@ export async function fetchCreateUser(
         data: {
             query: createUserMutation,
             variables: {
-                username: createUserRequestDTO.username,
                 identifier: createUserRequestDTO.identifier,
                 baseSalary: createUserRequestDTO.baseSalary
             }

@@ -1,20 +1,18 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
-export type UserUidAndUsername = {
+export type UserUid = {
     uid: string;
-    username: string;
 };
 
 type UserContextType = {
-    userInfo: UserUidAndUsername;
-    updateUser: (newData: UserUidAndUsername) => void;
+    userInfo: UserUid;
+    updateUser: (newData: UserUid) => void;
 };
 
 const LOCAL_STORAGE_KEY = 'userInfo';
 
-const initialState: UserUidAndUsername = {
-    uid: generateUserUID(),
-    username: ''
+const initialState: UserUid = {
+    uid: generateUserUID()
 };
 
 export function generateUserUID() {
@@ -24,7 +22,7 @@ export function generateUserUID() {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-    const [userData, setUserData] = useState<UserUidAndUsername>(() => {
+    const [userData, setUserData] = useState<UserUid>(() => {
         const storedData = localStorage.getItem(LOCAL_STORAGE_KEY);
         return storedData ? JSON.parse(storedData) : initialState;
     });
@@ -33,7 +31,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(userData));
     }, [userData]);
 
-    const updateUser = (newData: UserUidAndUsername) => {
+    const updateUser = (newData: UserUid) => {
         setUserData(newData);
     };
 
