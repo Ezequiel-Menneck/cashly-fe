@@ -85,11 +85,12 @@ export function FilterComponent({ categories, types, onFilterChange }: FilterCom
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="all">Qualquer Tipo</SelectItem>
-                        {types.map((type) => (
-                            <SelectItem key={type} value={type}>
-                                {type == 'CREDIT' ? 'Crédito' : 'Débito'}
-                            </SelectItem>
-                        ))}
+                        {types.length > 0 &&
+                            types.map((type) => (
+                                <SelectItem key={type} value={type}>
+                                    {type == 'CREDIT' ? 'Crédito' : 'Débito'}
+                                </SelectItem>
+                            ))}
                     </SelectContent>
                 </Select>
             </div>
