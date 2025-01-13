@@ -50,7 +50,7 @@ export default function TransactionCard() {
     const categories =
         categoriesData?.data?.findAll != null && categoriesData?.data?.findAll.length > 0
             ? categoriesData?.data?.findAll.map((category) => category.name)
-            : [''];
+            : [];
     const types: TransactionType[] = ['CREDIT', 'DEBIT'];
 
     const handleFilterChange = (filters: { category: string; date: Date | undefined; type: string }) => {
