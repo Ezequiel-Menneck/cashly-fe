@@ -8,14 +8,13 @@ import { fetchCreateCategory, fetchCreateTransaction, fetchUpdateCategory } from
 import { useUser } from '@/context/user-context';
 import { resetCategoryQueries, resetUserQueries } from '@/utils/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { DialogDescription, DialogTitle } from '@radix-ui/react-dialog';
 import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '../ui/button';
 import { CurrencyInput } from '../ui/currency-input';
 import { DatePicker } from '../ui/date-picker';
-import { Dialog, DialogContent } from '../ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '../ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Input } from '../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';

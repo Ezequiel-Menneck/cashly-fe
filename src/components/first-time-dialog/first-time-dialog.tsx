@@ -4,13 +4,13 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useUser } from '@/context/user-context';
 import { resetUserQueries } from '@/utils/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Separator } from '@radix-ui/react-dropdown-menu';
 import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '../ui/button';
 import { CurrencyInput } from '../ui/currency-input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
+import { Separator } from '../ui/separator';
 
 const formSchema = formSchemaBaseSalary;
 

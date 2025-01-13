@@ -1,9 +1,11 @@
 import Axios, { AxiosRequestConfig } from 'axios';
 
+const BASE_URL = import.meta.env.VITE_API_HOST;
+
 export const AXIOS_INSTANCE = Axios.create({
-    baseURL: 'http://localhost:8080/graphql',
+    baseURL: BASE_URL,
     headers: {
-        'Content-Type': 'application/json' // Required for GraphQL
+        'Content-Type': 'application/json'
     }
 });
 
